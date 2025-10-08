@@ -2,21 +2,20 @@
   "name": "uyut-landing",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://shikinartur.github.io/uyut-71",
   "dependencies": {
     "@headlessui/react": "^2.2.8",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "homepage": ".",
-    "public_url": "https://shikinartur.github.io/uyut-71"
+    "react-dom": "^18.3.1"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
-},
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
