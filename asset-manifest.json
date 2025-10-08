@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/uyut-71/static/css/main.8a895977.css",
-    "main.js": "/uyut-71/static/js/main.1826f781.js",
+    "main.css": "/uyut-71/static/css/main.91e06a7c.css",
+    "main.js": "/uyut-71/static/js/main.43d2e7c6.js",
     "static/media/pack-optima-2.webp": "/uyut-71/static/media/pack-optima-2.124cbf9ab8b53d9bad84.webp",
     "static/media/kaluga-4.webp": "/uyut-71/static/media/kaluga-4.ecfd4f6a10bb2a41116b.webp",
     "static/media/solnechnogorsk-3.webp": "/uyut-71/static/media/solnechnogorsk-3.216af680e97513691b95.webp",
@@ -35,11 +35,11 @@
     "static/media/grandline-logo.webp": "/uyut-71/static/media/grandline-logo.491bbc93fc62e7273d7e.webp",
     "static/media/knauf-logo.webp": "/uyut-71/static/media/knauf-logo.3cab90bc06f99b659021.webp",
     "index.html": "/uyut-71/index.html",
-    "main.8a895977.css.map": "/uyut-71/static/css/main.8a895977.css.map",
-    "main.1826f781.js.map": "/uyut-71/static/js/main.1826f781.js.map"
+    "main.91e06a7c.css.map": "/uyut-71/static/css/main.91e06a7c.css.map",
+    "main.43d2e7c6.js.map": "/uyut-71/static/js/main.43d2e7c6.js.map"
   },
   "entrypoints": [
-    "static/css/main.8a895977.css",
-    "static/js/main.1826f781.js"
+    "static/css/main.91e06a7c.css",
+    "static/js/main.43d2e7c6.js"
   ]
 }
