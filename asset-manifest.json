@@ -1,13 +1,45 @@
 {
   "files": {
-    "main.css": "/uyut-71/static/css/main.11b6607f.css",
-    "main.js": "/uyut-71/static/js/main.2a2891d2.js",
+    "main.css": "/uyut-71/static/css/main.8a895977.css",
+    "main.js": "/uyut-71/static/js/main.1826f781.js",
+    "static/media/pack-optima-2.webp": "/uyut-71/static/media/pack-optima-2.124cbf9ab8b53d9bad84.webp",
+    "static/media/kaluga-4.webp": "/uyut-71/static/media/kaluga-4.ecfd4f6a10bb2a41116b.webp",
+    "static/media/solnechnogorsk-3.webp": "/uyut-71/static/media/solnechnogorsk-3.216af680e97513691b95.webp",
+    "static/media/izumrudozero-3.webp": "/uyut-71/static/media/izumrudozero-3.cd815c8c0d7aa4562f76.webp",
+    "static/media/kaluga-2.webp": "/uyut-71/static/media/kaluga-2.ec3243f1f2a88fd5088a.webp",
+    "static/media/izumrudozero-2.webp": "/uyut-71/static/media/izumrudozero-2.f8ab8e235ddd0a42d6b6.webp",
+    "static/media/solnechnogorsk-1.webp": "/uyut-71/static/media/solnechnogorsk-1.2f240c4ca516cdf5194e.webp",
+    "static/media/solnechnogorsk-2.webp": "/uyut-71/static/media/solnechnogorsk-2.a6b018511647a21f9af0.webp",
+    "static/media/kaluga-3.webp": "/uyut-71/static/media/kaluga-3.ff96b855b16874fd9d58.webp",
+    "static/media/kaluga-1.webp": "/uyut-71/static/media/kaluga-1.5a91a9775efbb606ea96.webp",
+    "static/media/izumrudozero-1.webp": "/uyut-71/static/media/izumrudozero-1.2989d6b656ba1c020758.webp",
+    "static/media/general-partner-1.webp": "/uyut-71/static/media/general-partner-1.5d7e62fcada027400c20.webp",
+    "static/media/floorplan-empty.webp": "/uyut-71/static/media/floorplan-empty.5d00161aa2edd97392a1.webp",
+    "static/media/hero-banner-3.webp": "/uyut-71/static/media/hero-banner-3.62edd23088ac47c176d6.webp",
+    "static/media/hero-banner-2.webp": "/uyut-71/static/media/hero-banner-2.834e2144eac90a861bea.webp",
+    "static/media/hero-banner-4.webp": "/uyut-71/static/media/hero-banner-4.5a09f98e78c3ef31c638.webp",
+    "static/media/office-batura-1.webp": "/uyut-71/static/media/office-batura-1.03418577e549ef339db0.webp",
+    "static/media/pack-luxe-2.webp": "/uyut-71/static/media/pack-luxe-2.bc6771e7809239412281.webp",
+    "static/media/pack-standard-1.webp": "/uyut-71/static/media/pack-standard-1.f4ca39cfb3401fad7549.webp",
+    "static/media/pack-luxe-1.webp": "/uyut-71/static/media/pack-luxe-1.3ebe66ac567026c854e9.webp",
+    "static/media/office-batura-2.webp": "/uyut-71/static/media/office-batura-2.31831e153041f50dad75.webp",
+    "static/media/pack-optima-1.webp": "/uyut-71/static/media/pack-optima-1.eafd0d8b6eb6b7144b4e.webp",
+    "static/media/floorplan-furnished.webp": "/uyut-71/static/media/floorplan-furnished.74ca24d7ebc0c2f4e48d.webp",
+    "static/media/pack-standard-2.webp": "/uyut-71/static/media/pack-standard-2.f0982834bc66bbde9503.webp",
+    "static/media/geography-map.webp": "/uyut-71/static/media/geography-map.4b0c003dfb006c6b9582.webp",
+    "static/media/qrcode-route.webp": "/uyut-71/static/media/qrcode-route.866ae62b882dc99a0ea7.webp",
+    "static/media/rehau-logo.webp": "/uyut-71/static/media/rehau-logo.6da656100d7be1d04c61.webp",
+    "static/media/qrcode-review.webp": "/uyut-71/static/media/qrcode-review.6e8ec5e0d9a44709a2b2.webp",
+    "static/media/technonicol-logo.webp": "/uyut-71/static/media/technonicol-logo.bc5c0d3cc70fd2e494bb.webp",
+    "static/media/logo-batura.webp": "/uyut-71/static/media/logo-batura.3eac07df5fd5027ece67.webp",
+    "static/media/grandline-logo.webp": "/uyut-71/static/media/grandline-logo.491bbc93fc62e7273d7e.webp",
+    "static/media/knauf-logo.webp": "/uyut-71/static/media/knauf-logo.3cab90bc06f99b659021.webp",
     "index.html": "/uyut-71/index.html",
-    "main.11b6607f.css.map": "/uyut-71/static/css/main.11b6607f.css.map",
-    "main.2a2891d2.js.map": "/uyut-71/static/js/main.2a2891d2.js.map"
+    "main.8a895977.css.map": "/uyut-71/static/css/main.8a895977.css.map",
+    "main.1826f781.js.map": "/uyut-71/static/js/main.1826f781.js.map"
   },
   "entrypoints": [
-    "static/css/main.11b6607f.css",
-    "static/js/main.2a2891d2.js"
+    "static/css/main.8a895977.css",
+    "static/js/main.1826f781.js"
   ]
 }
