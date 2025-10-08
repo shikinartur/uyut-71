@@ -58,6 +58,32 @@ function rub(n) {
   }).format(Number.isFinite(n) ? n : 0);
 }
 
+// Компонент защищенного изображения (только защита от сохранения, без водяных знаков)
+function ProtectedImage({ src, alt, className, style, loading, onClick, ...props }) {
+  const handleContextMenu = (e) => {
+    e.preventDefault(); // Блокируем правый клик
+  };
+
+  const handleDragStart = (e) => {
+    e.preventDefault(); // Блокируем перетаскивание
+  };
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      style={{ ...style, userSelect: 'none' }}
+      loading={loading}
+      onClick={onClick}
+      onContextMenu={handleContextMenu}
+      onDragStart={handleDragStart}
+      draggable={false}
+      {...props}
+    />
+  );
+}
+
 /* ================= Data & Config ================= */
 
 const CONTACTS = {
@@ -392,11 +418,48 @@ const ADDONS = [
 /* ================= Components ================= */
 
 // Функция для прокрутки к блоку CTA
+// Улучшенная функция smooth scroll с полифиллом для мобильных браузеров
+const smoothScrollTo = (element, options = {}) => {
+  if (!element) return;
+  
+  // Проверяем поддержку smooth scroll
+  const supportsNativeScrollBehavior = 'scrollBehavior' in document.documentElement.style;
+  
+  if (supportsNativeScrollBehavior) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center', ...options });
+  } else {
+    // Полифилл для браузеров без поддержки smooth scroll
+    const targetPosition = element.offsetTop - (window.innerHeight / 2) + (element.offsetHeight / 2);
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 800;
+    let start = null;
+
+    function animation(currentTime) {
+      if (start === null) start = currentTime;
+      const timeElapsed = currentTime - start;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      // Easing function
+      const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+      
+      window.scrollTo(0, startPosition + (distance * ease));
+      
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      }
+    }
+    
+    requestAnimationFrame(animation);
+  }
+};
+
 const scrollToCTA = (setIsMenuOpen) => {
     // Если меню открыто, закрываем его
     if (setIsMenuOpen) setIsMenuOpen(false);
-    // Прокрутка к секции #cta
-    document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Прокрутка к секции #cta с улучшенным smooth scroll
+    const element = document.getElementById('cta');
+    smoothScrollTo(element);
 };
 
 function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWithPromo }) {
@@ -477,17 +540,86 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
 
       {/* Мобильное меню */}
       <nav
-        className={`md:hidden bg-white border-t px-4 py-3 space-y-3 text-sm transition-all duration-200 ease-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'} fixed w-full z-40 shadow-lg`}
-        style={{ top: promoOffset + HEADER_HEIGHT }}
+        className={`md:hidden bg-white border-t px-4 py-3 space-y-3 text-sm transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100 visible' : 'max-h-0 opacity-0 invisible overflow-hidden'} fixed w-full z-40 shadow-lg`}
+        style={{ 
+          top: promoOffset + HEADER_HEIGHT,
+          transform: isMenuOpen ? 'translateY(0)' : 'translateY(-100%)',
+          willChange: 'transform'
+        }}
         aria-label="Мобильная навигация"
       >
-          <a href="#packs" className="block hover:text-neutral-600" onClick={() => setIsMenuOpen(false)}>
+          <a href="#packs" className="block hover:text-neutral-600" onClick={(e) => {
+            e.preventDefault();
+            setIsMenuOpen(false);
+            // Скролл к заголовку "Калькулятор стоимости"
+            setTimeout(() => {
+              const headings = document.querySelectorAll('h3');
+              let targetElement = null;
+              
+              for (const heading of headings) {
+                if (heading.textContent && heading.textContent.includes('Калькулятор стоимости')) {
+                  targetElement = heading;
+                  break;
+                }
+              }
+              
+              if (targetElement) {
+                const elementRect = targetElement.getBoundingClientRect();
+                const absoluteElementTop = elementRect.top + window.pageYOffset;
+                const targetPosition = absoluteElementTop - 100;
+                
+                window.scrollTo({
+                  top: targetPosition,
+                  behavior: 'smooth'
+                });
+              } else {
+                // Фоллбэк - скролл к секции calc
+                const calcSection = document.getElementById('calc');
+                if (calcSection) {
+                  calcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }, 300);
+          }}>
             Калькулятор
           </a>
           <a href="#reviews" className="block hover:text-neutral-600" onClick={() => setIsMenuOpen(false)}>
             Отзывы
           </a>
-          <a href="#company" className="block hover:text-neutral-600" onClick={() => setIsMenuOpen(false)}>
+          <a href="#company" className="block hover:text-neutral-600" onClick={(e) => {
+            e.preventDefault();
+            setIsMenuOpen(false);
+            // Скролл к форме "Записаться на консультацию"
+            setTimeout(() => {
+              // Ищем все h4 элементы и находим нужный
+              const headings = document.querySelectorAll('h4');
+              let targetElement = null;
+              
+              for (const heading of headings) {
+                if (heading.textContent && heading.textContent.includes('Записаться')) {
+                  targetElement = heading;
+                  break;
+                }
+              }
+              
+              if (targetElement) {
+                const elementRect = targetElement.getBoundingClientRect();
+                const absoluteElementTop = elementRect.top + window.pageYOffset;
+                const targetPosition = absoluteElementTop - 100;
+                
+                window.scrollTo({
+                  top: targetPosition,
+                  behavior: 'smooth'
+                });
+              } else {
+                // Фоллбэк - скролл к секции company
+                const companySection = document.getElementById('company');
+                if (companySection) {
+                  companySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }, 300); // Увеличиваем время ожидания
+          }}>
            Контакты
           </a>
           <div className="mt-2">
@@ -558,7 +690,7 @@ function ImageSlider({ images = [], small = false, onOpen, auto = false, interva
     >
       <div className="absolute inset-0 overflow-hidden rounded-xl">
         {images.map((src, i) => (
-          <img
+          <ProtectedImage
             key={i}
             src={src}
             alt={`Фото ${i + 1}`}
@@ -644,6 +776,14 @@ function Modal({ images = [], startIndex = 0, onClose }) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Блокируем скролл body при открытом модальном окне
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   if (!images || images.length === 0) return null;
 
   const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
@@ -668,7 +808,7 @@ function Modal({ images = [], startIndex = 0, onClose }) {
       role="dialog"
       aria-modal="true"
     >
-      <img
+      <ProtectedImage
         src={images[index]}
         alt={`Просмотр фото ${index + 1} из ${images.length}`}
         className="max-h-[95%] max-w-[95%] object-contain rounded-lg"
@@ -963,7 +1103,7 @@ function Packs({ activePack, setActivePack, openModal }) {
           </div>
         </div>
   {/* ИЗМЕНЕНИЕ: ДОБАВЛЕНЫ lg:sticky и self-start, а также style={{ top: stickyTop }} для фиксации на десктопе */}
-  <aside className="space-y-4 lg:sticky self-start" style={{ top: stickyTop }}>
+  <aside className="space-y-4 lg:sticky lg:self-start" style={{ top: stickyTop }}>
           <div className="bg-white rounded-2xl border border-neutral-200 p-5">
             <h4 className="text-lg font-semibold mb-3">Краткий расчет</h4>
             <div className="space-y-1 text-sm">
@@ -1178,7 +1318,7 @@ function FloorPlans({ openModal }) {
                     }}
                 >
                     <h4 className="text-lg font-bold mb-4">Посмотреть площади и размеры</h4>
-                    <img
+                    <ProtectedImage
                         src={FLOORPLANS.empty}
                         alt="Планировка дома «Уют-71» без мебели"
                         className="w-full max-h-[420px] object-contain rounded-xl"
@@ -1193,7 +1333,7 @@ function FloorPlans({ openModal }) {
                     }}
                 >
                     <h4 className="text-lg font-bold mb-4">Вариант расстановки мебели</h4>
-                    <img
+                    <ProtectedImage
                         src={FLOORPLANS.furnished}
                         alt="Планировка дома «Уют-71» с мебелью"
                         className="w-full max-h-[420px] object-contain rounded-xl"
@@ -1310,7 +1450,7 @@ function YandexMapWidget() {
             <div className="grid md:grid-cols-2 gap-6 items-start bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden">
   {/* Левая колонка: фото шоурума */}
   <div className="w-full h-full">
-    <img 
+    <ProtectedImage 
       src={officeBatura2Url} // ИСПОЛЬЗУЕМ ИМПОРТ
       alt="Офис строительной компании Батура" 
       className="w-full h-full object-cover"
@@ -1616,7 +1756,7 @@ export default function UyutLanding() {
 
             <div className="flex flex-col lg:flex-row items-center gap-8 mb-10 p-6 border border-red-200 bg-red-50 rounded-2xl shadow-lg">
         <div className="flex-shrink-0 w-full lg:w-auto">
-          <img src={generalPartner1} alt="Логотип Grand Line — генеральный партнер и поставщик материалов" className="w-full h-auto max-w-sm mx-auto lg:max-w-none lg:h-80" loading="lazy"/>
+          <ProtectedImage src={generalPartner1} alt="Логотип Grand Line — генеральный партнер и поставщик материалов" className="w-full h-auto max-w-sm mx-auto lg:max-w-none lg:h-80" loading="lazy"/>
                 </div>
                 {/* Add min-w-0 to avoid overflow in flex layout on small screens */}
                 <div className="flex-1 min-w-0">
@@ -1777,7 +1917,7 @@ export default function UyutLanding() {
                 <p className="text-neutral-700 mb-4">Ваш дом всегда под нашим контролем. Мы работаем только в радиусе 200 км от МКАД, чтобы обеспечить личный, оперативный контроль за объектами. Поэтому можем гарантировать качество, соблюдение технологии и сдачу дома в срок.</p>
               </div>
               <div>
-                <img src={geoMapUrl} alt="География строительства компании «Батура»" className="w-full rounded-2xl border border-neutral-200 shadow-xl" loading="lazy" />
+                <ProtectedImage src={geoMapUrl} alt="География строительства компании «Батура»" className="w-full rounded-2xl border border-neutral-200 shadow-xl" loading="lazy" />
               </div>
             </div>
           </section>
@@ -1800,7 +1940,7 @@ export default function UyutLanding() {
                                   </ul>
                 {/* Фотография шоурума */}
                 <div className="w-full overflow-hidden rounded-2xl shadow-xl">
-                  <img 
+                  <ProtectedImage 
                     src={officeBaturaUrl} // ИСПОЛЬЗУЕМ ИМПОРТ
                     alt="Уютный, современный шоурум компании «Батура» в Москве" 
                     className="w-full h-auto object-cover border border-neutral-200" 
@@ -2240,8 +2380,33 @@ export default function UyutLanding() {
                 className="w-full px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-800 text-white font-bold hover:bg-emerald-700 transition shadow-lg text-sm flex items-center justify-center gap-1" 
                 onClick={(e) => {
                   e.preventDefault();
-                  const el = document.querySelector('#calc form');
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  // Скролл к заголовку "Краткий расчет"
+                  const headings = document.querySelectorAll('h4');
+                  let targetElement = null;
+                  
+                  for (const heading of headings) {
+                    if (heading.textContent && heading.textContent.includes('Краткий расчет')) {
+                      targetElement = heading;
+                      break;
+                    }
+                  }
+                  
+                  if (targetElement) {
+                    const elementRect = targetElement.getBoundingClientRect();
+                    const absoluteElementTop = elementRect.top + window.pageYOffset;
+                    const targetPosition = absoluteElementTop - 100;
+                    
+                    window.scrollTo({
+                      top: targetPosition,
+                      behavior: 'smooth'
+                    });
+                  } else {
+                    // Фоллбэк - скролл к aside элементу с расчетом
+                    const asideElement = document.querySelector('aside');
+                    if (asideElement) {
+                      asideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }
                 }}
               >
                  РАСЧЕТ ЦЕНЫ

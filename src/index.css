@@ -1,5 +1,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { font-family: sans-serif; margin: 0; background: #f9f9f9; }
-html { scroll-behavior: smooth; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+  -webkit-overflow-scrolling: touch; /* Улучшает скролл на iOS */
+}
+
+/* Улучшения для мобильных устройств */
+@media (max-width: 768px) {
+  html, body {
+    /* Предотвращаем bounce эффект на iOS */
+    overscroll-behavior: none;
+  }
+  
+  /* Фиксация проблем с position: fixed на iOS */
+  .fixed-element-mobile-fix {
+    position: absolute;
+  }
+}
+
+/* Защита изображений от сохранения */
+img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: auto;
+}
+
+/* Дополнительная защита для определенных браузеров */
+img::selection {
+  background: transparent;
+}
+
+img::-moz-selection {
+  background: transparent;
+}
+
+/* Защита от скриншотов и записи экрана */
+@media print {
+  img {
+    display: none !important;
+  }
+}
+
+/* Дополнительная защита водяных знаков */
+.watermark-logo {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
