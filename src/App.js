@@ -1,7 +1,52 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import "./index.css";
-// Helmet импортируется в SeoHead.js, здесь остается для обратной совместимости, но лучше использовать SeoHead.js
 // import { Helmet } from "react-helmet"; 
+
+// ====================================================================
+// ==================== ИМПОРТ ИЗОБРАЖЕНИЙ (Относительные пути для Webpack) =============
+// ====================================================================
+import logoUrl from "./images/logo-batura.webp";
+import grandlineLogoUrl from "./images/grandline-logo.webp";
+import rehauLogoUrl from "./images/rehau-logo.webp";
+import knaufLogoUrl from "./images/knauf-logo.webp";
+import technonicolLogoUrl from "./images/technonicol-logo.webp";
+import geoMapUrl from "./images/geography-map.webp";
+import officeBaturaUrl from "./images/office-batura-1.webp";
+import officeBatura2Url from "./images/office-batura-2.webp";
+import qrCodeReviewUrl from "./images/qrcode-review.webp";
+import qrCodeRouteUrl from "./images/qrcode-route.webp";
+
+// Комплектации
+import standard1 from "./images/pack-standard-1.webp";
+import standard2 from "./images/pack-standard-2.webp";
+import optima1 from "./images/pack-optima-1.webp";
+import optima2 from "./images/pack-optima-2.webp";
+import luxe1 from "./images/pack-luxe-1.webp";
+import luxe2 from "./images/pack-luxe-2.webp";
+
+// Hero и Генеральный партнер
+import generalPartner1 from "./images/General/general-partner-1.webp";
+import heroBanner2 from "./images/General/hero-banner-2.webp";
+import heroBanner3 from "./images/General/hero-banner-3.webp";
+import heroBanner4 from "./images/General/hero-banner-4.webp";
+
+// Планировки
+import floorplanEmpty from "./images/floorplan-empty.webp";
+import floorplanFurnished from "./images/floorplan-furnished.webp";
+
+// Галерея (для каждого проекта нужно импортировать все фото)
+import izumrudozero1 from "./images/Example/izumrudozero-1.webp";
+import izumrudozero2 from "./images/Example/izumrudozero-2.webp";
+import izumrudozero3 from "./images/Example/izumrudozero-3.webp";
+import kaluga1 from "./images/Example/kaluga-1.webp";
+import kaluga2 from "./images/Example/kaluga-2.webp";
+import kaluga3 from "./images/Example/kaluga-3.webp";
+import kaluga4 from "./images/Example/kaluga-4.webp";
+import solnechnogorsk1 from "./images/Example/solnechnogorsk-1.webp";
+import solnechnogorsk2 from "./images/Example/solnechnogorsk-2.webp";
+import solnechnogorsk3 from "./images/Example/solnechnogorsk-3.webp";
+
+// ====================================================================
 
 /* ================= Utils ================= */
 // Функция форматирования числа в рубли
@@ -91,51 +136,50 @@ async function sendDataToApi(data, source) {
   }
 }
 
-// Data definitions (PACKS, ADDONS, PHOTOS, etc. are omitted for brevity but remain unchanged)
+// Data definitions
 
-const LOGO_URL = "./images/logo-batura.webp";
+// Используем импортированную переменную
+const LOGO_URL = logoUrl;
 
 const PHOTOS = {
-  main: "./images/General/Генеральный партнер 1.webp",
+  main: generalPartner1, // Используем импортированную переменную
   standard: [
-    "./images/Комплектация Стандарт 1.webp",
-    "./images/Комплектация Стандарт 2.webp",
+    standard1,
+    standard2,
   ],
   optima: [
-    "./images/Комплектация Оптима 1.webp",
-    "./images/Комплектация Оптима 2.webp",
+    optima1,
+    optima2,
   ],
   luxe: [
-    "./images/Комплектация Люкс 1.webp",
-    "./images/Комплектация Люкс 2.webp",
+    luxe1,
+    luxe2,
   ],
 };
 // Изображения для главного баннера (Hero)
 const HERO_IMAGES = [
-  "./images/General/Генеральный партнер 1.webp",
-  "./images/General/Главный банер 2.webp",
-  "./images/General/Главный банер 3.webp",
-  "./images/General/Главный банер 4.webp",
+  generalPartner1,
+  heroBanner2,
+  heroBanner3,
+  heroBanner4,
 ];
 const FLOORPLANS = {
-  empty: "./images/План без мебели.webp",
-  furnished:
-    "./images/План с мебелью.webp",
+  empty: floorplanEmpty,
+  furnished: floorplanFurnished,
 };
 
 const GALLERY = [
   {
     location: "Можайск. кпИзумрудное Озеро", date: "декабрь 2024", pack: "КВАДРО-БРУС",
-
-    images: ["./images/Example/Izumrudozero_3.webp", "./images/Example/Izumrudozero_1.webp", "./images/Example/Izumrudozero_2.webp"],
+    images: [izumrudozero3, izumrudozero1, izumrudozero2],
   },
   {
     location: "Калуга. Желыбино", date: "май 2025", pack: "ОПТИМА",
-    images: ["./images/Example/Kaluga_1.webp", "./images/Example/Kaluga_2.webp", "./images/Example/Kaluga_3.webp", "./images/Example/Kaluga_4.webp"],
+    images: [kaluga1, kaluga2, kaluga3, kaluga4],
   },
   {
     location: "Солнечногорск", date: "октябрь 2024", pack: "СТАНДАРТ",
-    images: ["./images/Example/solnechnogorsk_3.webp", "./images/Example/solnechnogorsk_2.webp", "./images/Example/solnechnogorsk_1.webp"],
+    images: [solnechnogorsk3, solnechnogorsk2, solnechnogorsk1],
   },
 ];
 
@@ -374,7 +418,7 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
   }}
 >
   <img
-    src={LOGO_URL}
+    src={LOGO_URL} // ИСПОЛЬЗУЕМ ИМПОРТ
     alt="Логотип компании Батура"
     className="h-14 w-auto"   
   />
@@ -945,7 +989,7 @@ function Packs({ activePack, setActivePack, openModal }) {
               <div className={`flex flex-col gap-2 p-3 mt-2 mb-2 rounded-xl border border-dashed ${PROMO.ui.panelBorder} ${PROMO.ui.panelBg}`}>
                 {/* Логотип и заголовок в ряд */}
                 <div className="flex items-center gap-2">
-                    <img src="./images/grandline-logo.webp" alt="Grand_Line — партнер акции" className="h-14 w-auto" style={{maxWidth:'120px'}} loading="lazy"/>
+                    <img src={grandlineLogoUrl} alt="Grand_Line — партнер акции" className="h-14 w-auto" style={{maxWidth:'120px'}} loading="lazy"/>
                     <p className={`font-bold text-sm ${PROMO.ui.panelTitle}`}>
                         Акция: {`${PROMO.label} до ${PROMO.until}`}
                     </p>
@@ -1167,8 +1211,8 @@ function FloorPlans({ openModal }) {
 function YandexReviewsWidget() {
   const reviewsUrl = "https://yandex.ru/maps-reviews-widget/104037212737?comments";
   
-  // ИСПРАВЛЕНО: Путь к изображению
-  const qrCodeImagePath = "./images/qrcod_отзыв.webp"; 
+  // ИСПРАВЛЕНО: Путь к изображению (Используем импорт)
+  const qrCodeImagePath = qrCodeReviewUrl; 
 
   // Код виджета, предоставленный пользователем, с небольшими изменениями для адаптивности.
   const widgetHtml = `<div style="width: 100%; height: 800px; overflow: hidden; position: relative; max-width: 560px; margin: 0 auto;">
@@ -1208,7 +1252,7 @@ function YandexReviewsWidget() {
                     Отсканируйте QR-код, чтобы поделиться своим отзывом о работе с нами. Мы ценим ваше мнение.
                 </p>
                 
-                {/* Использование изображения по публичному пути */}
+                {/* Использование импорта */}
                 <a 
                     href={reviewsUrl}
                     target="_blank"
@@ -1217,7 +1261,7 @@ function YandexReviewsWidget() {
                     aria-label="QR-код для перехода на страницу отзывов Яндекс"
                 >
                     <img 
-                        src={qrCodeImagePath} 
+                        src={qrCodeImagePath} // ИСПОЛЬЗУЕМ ИМПОРТ
                         alt="QR-код для перехода на страницу отзывов Яндекс"
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -1267,7 +1311,7 @@ function YandexMapWidget() {
   {/* Левая колонка: фото шоурума */}
   <div className="w-full h-full">
     <img 
-      src="./images/Офис Батура 2.webp" 
+      src={officeBatura2Url} // ИСПОЛЬЗУЕМ ИМПОРТ
       alt="Офис строительной компании Батура" 
       className="w-full h-full object-cover"
       loading="lazy"
@@ -1447,7 +1491,7 @@ export default function UyutLanding() {
         promoOffset={promoOffset}
         totalWithPromo={totalWithPromoStr}
       />
-    // ...весь остальной код остаётся без изменений...
+    
 
       {/* Promo Popup (Exit Intent) */}
       {showPromoPopup && daysLeft > 0 && (
@@ -1459,7 +1503,7 @@ export default function UyutLanding() {
               aria-label="Закрыть баннер акции"
               style={{lineHeight:1}}
             >×</button>
-            <img src="./images/grandline-logo.webp" alt="Grand Line — партнер акции" className="h-16 mb-2" style={{maxWidth:'200px'}} loading="lazy"/>
+            <img src={grandlineLogoUrl} alt="Grand Line — партнер акции" className="h-16 mb-2" style={{maxWidth:'200px'}} loading="lazy"/>
             <div className="text-xl font-extrabold text-red-700 text-center mb-1">СКИДКА ДО {PROMO.until} СГОРАЕТ!</div>
             <div className="text-base text-neutral-800 text-center mb-2">До конца акции осталось <b className="text-red-600 text-3xl mx-1">{daysLeft}</b> {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}</div>
             <div className="text-sm text-neutral-600 text-center mb-3">Не упустите персональную скидку {Math.round(PROMO.percent*100)}% на дом вашей мечты.</div>
@@ -1482,9 +1526,8 @@ export default function UyutLanding() {
         </div>
       )}
 
-// ...весь остальной код остаётся без изменений...
   {/* Добавляем отступ сверху, равный высоте шапки + промо-полосе */}
-  <div className="min-h-screen bg-neutral-50 text-neutral-900" style={{ paddingTop: promoOffset + 68 }}>
+  <div className="min-h-screen bg-neutral-50 наtext-neutral-900" style={{ paddingTop: promoOffset + 68 }}>
         <main>
           {/* Hero */}
           <section className="mx-auto max-w-7xl px-4 py-10 grid md:grid-cols-2 gap-8 items-center">
@@ -1573,7 +1616,7 @@ export default function UyutLanding() {
 
             <div className="flex flex-col lg:flex-row items-center gap-8 mb-10 p-6 border border-red-200 bg-red-50 rounded-2xl shadow-lg">
         <div className="flex-shrink-0 w-full lg:w-auto">
-          <img src="./images/General/Генеральный партнер 1.webp" alt="Логотип Grand Line — генеральный партнер и поставщик материалов" className="w-full h-auto max-w-sm mx-auto lg:max-w-none lg:h-80" loading="lazy"/>
+          <img src={generalPartner1} alt="Логотип Grand Line — генеральный партнер и поставщик материалов" className="w-full h-auto max-w-sm mx-auto lg:max-w-none lg:h-80" loading="lazy"/>
                 </div>
                 {/* Add min-w-0 to avoid overflow in flex layout on small screens */}
                 <div className="flex-1 min-w-0">
@@ -1635,7 +1678,7 @@ export default function UyutLanding() {
                 
                 {/* Окна REHAU */}
                 <div className="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-200 shadow-md">
-                    <img src="./images/логотип Rehau.webp" alt="Логотип Rehau — профили для окон" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
+                    <img src={rehauLogoUrl} alt="Логотип Rehau — профили для окон" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
                     <span className="text-sm font-bold text-neutral-800">Окна REHAU</span>
                     <span className="text-xs text-neutral-500 text-center mt-1">
                         Энергоэффективность и долговечность. Вы получаете оригинальный немецкий профиль, который сохраняет тепло и не требует регулировки годами.
@@ -1644,7 +1687,7 @@ export default function UyutLanding() {
                 
                 {/* Утеплитель KNAUF */}
                 <div className="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-200 shadow-md">
-                    <img src="./images/логотип кнауф.webp" alt="Логотип Knauf — теплоизоляция" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
+                    <img src={knaufLogoUrl} alt="Логотип Knauf — теплоизоляция" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
                     <span className="text-sm font-bold text-neutral-800">Утеплитель KNAUF</span>
                     <span className="text-xs text-neutral-500 text-center mt-1">
                         Здоровье и Экология. Используем только безопасную, негорючую и экологически чистую теплоизоляцию, рекомендованную для жилых домов.
@@ -1653,7 +1696,7 @@ export default function UyutLanding() {
                 
                 {/* Изоляция ТЕХНОНИКОЛЬ */}
                 <div className="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-200 shadow-md">
-                    <img src="./images/лого технониколь.webp" alt="Логотип Технониколь — изоляционные материалы" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
+                    <img src={technonicolLogoUrl} alt="Логотип Технониколь — изоляционные материалы" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
                     <span className="text-sm font-bold text-neutral-800">Изоляция ТЕХНОНИКОЛЬ</span>
                     <span className="text-xs text-neutral-500 text-center mt-1">
                         Надежная защита от влаги. Базальтовый утеплитель. Изоляционные пленки для максимальной защиты каркаса от конденсата и влаги.
@@ -1734,7 +1777,7 @@ export default function UyutLanding() {
                 <p className="text-neutral-700 mb-4">Ваш дом всегда под нашим контролем. Мы работаем только в радиусе 200 км от МКАД, чтобы обеспечить личный, оперативный контроль за объектами. Поэтому можем гарантировать качество, соблюдение технологии и сдачу дома в срок.</p>
               </div>
               <div>
-                <img src="./images/География строительства.webp" alt="География строительства компании «Батура»" className="w-full rounded-2xl border border-neutral-200 shadow-xl" loading="lazy" />
+                <img src={geoMapUrl} alt="География строительства компании «Батура»" className="w-full rounded-2xl border border-neutral-200 shadow-xl" loading="lazy" />
               </div>
             </div>
           </section>
@@ -1758,7 +1801,7 @@ export default function UyutLanding() {
                 {/* Фотография шоурума */}
                 <div className="w-full overflow-hidden rounded-2xl shadow-xl">
                   <img 
-                    src="./images/Офис Батура.webp" 
+                    src={officeBaturaUrl} // ИСПОЛЬЗУЕМ ИМПОРТ
                     alt="Уютный, современный шоурум компании «Батура» в Москве" 
                     className="w-full h-auto object-cover border border-neutral-200" 
                     loading="lazy" 
@@ -1773,7 +1816,7 @@ export default function UyutLanding() {
                                         <div className="flex flex-col items-center justify-center p-3 bg-neutral-50 rounded-xl border border-neutral-100">
                       <div className="flex flex-col items-center">
                                                     <img
-                            src="./images/qrcod_маршрут в офис.webp"
+                            src={qrCodeRouteUrl} // ИСПОЛЬЗУЕМ ИМПОРТ
                             alt="QR-код для прокладывания маршрута в шоурум Батура на Яндекс Картах"
                             className="w-36 h-36 object-contain border-4 border-emerald-500 rounded-lg shadow-md"
                             loading="lazy"
@@ -1830,7 +1873,7 @@ export default function UyutLanding() {
                 
                 {/* Форма записи на консультацию с сообщением об успехе */}
                 <div className="mt-6 border-t pt-4">
-                  <h4 className="font-bold text-lg mb-3 text-center">Записаться на консультацию</h4>
+                  <h4 className="font-bold text-lg mb-3 наtext-center">Записаться на консультацию</h4>
                   {isAppointmentFormSent ? (
                       <SuccessMessage
                         title="✅ Заявка на консультацию отправлена!"
@@ -2015,8 +2058,12 @@ export default function UyutLanding() {
             </div>
           </section>
         </main>
+        
+        {/* Отступ для мобильного футера */}
+        <div className="h-16 md:hidden"></div>
+        
         {/* Виджеты мессенджеров для мобильной версии */}
-        <div className="fixed right-4 bottom-24 z-40 md:hidden flex flex-col gap-2">
+        <div className="fixed right-4 bottom-20 z-40 md:hidden flex flex-col gap-2">
           {/* WhatsApp */}
           <a
             href={`https://wa.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71».`}
@@ -2043,8 +2090,149 @@ export default function UyutLanding() {
           </a>
         </div>
 
+        {/* Футер сайта */}
+        <footer className="bg-neutral-900 text-white pt-8 pb-4 relative" role="contentinfo">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Основной контент футера */}
+            <div className="grid md:grid-cols-4 gap-6 mb-6">
+              {/* Колонка 1: Логотип и описание */}
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-3 mb-4">
+                  <img
+                    src={LOGO_URL}
+                    alt="Логотип компании Батура"
+                    className="h-12 w-auto"
+                  />
+                  <span className="font-bold text-base">
+                    Каркасный дом «Уют-71» от компании «Батура»
+                  </span>
+                </div>
+                <p className="text-neutral-300 mb-3 max-w-md text-sm">
+                  Гарантия 15 лет, срок строительства 7 недель, фиксированная цена без доплат.
+                </p>
+                <p className="text-neutral-300 mb-4 max-w-md text-sm">
+                  Строим надежные каркасные дома с 2016 года. Более 350 реализованных проектов. Собственные производство и бригады.
+                </p>
+                <div className="flex gap-4">
+                  <a
+                    href={`https://wa.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71».`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors"
+                    aria-label="WhatsApp"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
+                    </svg>
+                  </a>
+                  <a
+                    href={`https://t.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
+                    aria-label="Telegram"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+              {/* Колонка 2: Навигация */}
+              <div>
+                <h3 className="font-bold text-base mb-3 text-emerald-400">Навигация</h3>
+                <ul className="space-y-1.5">
+                  <li>
+                    <a href="#packs" className="text-neutral-300 hover:text-white transition-colors text-sm">
+                      Комплектации
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#calc" className="text-neutral-300 hover:text-white transition-colors text-sm">
+                      Калькулятор
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#gallery" className="text-neutral-300 hover:text-white transition-colors text-sm">
+                      Примеры работ
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#reviews" className="text-neutral-300 hover:text-white transition-colors text-sm">
+                      Отзывы
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#company" className="text-neutral-300 hover:text-white transition-colors text-sm">
+                      О компании
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#faq" className="text-neutral-300 hover:text-white transition-colors text-sm">
+                      Вопросы и ответы
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Колонка 3: Контакты */}
+              <div>
+                <h3 className="font-bold text-base mb-3 text-emerald-400">Контакты</h3>
+                <div className="space-y-2.5">
+                  <div>
+                    <p className="text-xs text-neutral-400 mb-1">Телефон:</p>
+                    <a
+                      href={`tel:${CONTACTS.phoneHref}`}
+                      className="text-white text-sm font-semibold hover:text-emerald-400 transition-colors"
+                    >
+                      {CONTACTS.phone}
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400 mb-1">Email:</p>
+                    <a
+                      href={`mailto:${CONTACTS.email}`}
+                      className="text-white text-sm hover:text-emerald-400 transition-colors"
+                    >
+                      {CONTACTS.email}
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400 mb-1">Адрес:</p>
+                    <p className="text-white text-sm">
+                      {CONTACTS.address}
+                    </p>
+                    
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400 mb-1">График работы:</p>
+                    <p className="text-white text-sm">{CONTACTS.hours}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Нижняя часть футера */}
+            <div className="border-t border-neutral-700 pt-4">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+                <div className="text-neutral-400 text-xs">
+                  © 2025 Строительная компания «Батура». Все права защищены.
+                </div>
+                <div className="flex flex-wrap gap-4 text-xs">
+                  <a href="#" className="text-neutral-400 hover:text-white transition-colors">
+                    Политика конфиденциальности
+                  </a>
+                  <a href="#" className="text-neutral-400 hover:text-white transition-colors">
+                    Пользовательское соглашение
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
+
         {/* Мобильное фиксированное меню CTA */}
-        <footer className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-white/95 border-t border-neutral-200" role="contentinfo">
+        <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-white/95 border-t border-neutral-200">
           <nav aria-label="Мобильное меню CTA">
             <div className="max-w-7xl mx-auto px-4 py-2">
               <a
@@ -2060,7 +2248,7 @@ export default function UyutLanding() {
               </a>
             </div>
           </nav>
-        </footer>
+        </div>
       </div>
       {/* Полноэкранная галерея (десктоп) */}
       {modalImages.length > 0 && (
