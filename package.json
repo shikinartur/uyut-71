@@ -2,7 +2,7 @@
   "name": "uyut-landing",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://shikinartur.github.io/uyut-71",
+  "homepage": "/uyut-71",
   "dependencies": {
     "@headlessui/react": "^2.2.8",
     "react": "^18.3.1",
