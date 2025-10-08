@@ -28,8 +28,8 @@ const CONTACTS = {
 const PROMO = {
   enabled: true,                            // вкл/выкл акцию true/false
   percent: 0.07,                            // размер скидки (например, 0.07 для 7%)
-  until: "10 октября",                      // срок действия акции (текст)
-  endDate: { year: 2025, month: 10, day: 10 }, // дата завершения акции (месяц: 1-12)
+  until: "15 октября",                      // срок действия акции (текст)
+  endDate: { year: 2025, month: 10, day: 15 }, // дата завершения акции (месяц: 1-12)
   exitPopupEnabled: true,                   // срок вкл/выкл Popup true/false
   ui: {
     badgeBg: "bg-red-100",
