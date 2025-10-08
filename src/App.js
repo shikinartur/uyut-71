@@ -93,49 +93,49 @@ async function sendDataToApi(data, source) {
 
 // Data definitions (PACKS, ADDONS, PHOTOS, etc. are omitted for brevity but remain unchanged)
 
-const LOGO_URL = "/images/logo-batura.webp";
+const LOGO_URL = "./images/logo-batura.webp";
 
 const PHOTOS = {
-  main: "/images/General/Генеральный партнер 1.webp",
+  main: "./images/General/Генеральный партнер 1.webp",
   standard: [
-    "/images/Комплектация Стандарт 1.webp",
-    "/images/Комплектация Стандарт 2.webp",
+    "./images/Комплектация Стандарт 1.webp",
+    "./images/Комплектация Стандарт 2.webp",
   ],
   optima: [
-    "/images/Комплектация Оптима 1.webp",
-    "/images/Комплектация Оптима 2.webp",
+    "./images/Комплектация Оптима 1.webp",
+    "./images/Комплектация Оптима 2.webp",
   ],
   luxe: [
-    "/images/Комплектация Люкс 1.webp",
-    "/images/Комплектация Люкс 2.webp",
+    "./images/Комплектация Люкс 1.webp",
+    "./images/Комплектация Люкс 2.webp",
   ],
 };
 // Изображения для главного баннера (Hero)
 const HERO_IMAGES = [
-  "/images/General/Генеральный партнер 1.webp",
-  "/images/General/Главный банер 2.webp",
-  "/images/General/Главный банер 3.webp",
-  "/images/General/Главный банер 4.webp",
+  "./images/General/Генеральный партнер 1.webp",
+  "./images/General/Главный банер 2.webp",
+  "./images/General/Главный банер 3.webp",
+  "./images/General/Главный банер 4.webp",
 ];
 const FLOORPLANS = {
-  empty: "/images/План без мебели.webp",
+  empty: "./images/План без мебели.webp",
   furnished:
-    "/images/План с мебелью.webp",
+    "./images/План с мебелью.webp",
 };
 
 const GALLERY = [
   {
     location: "Можайск. кпИзумрудное Озеро", date: "декабрь 2024", pack: "КВАДРО-БРУС",
 
-    images: ["/images/Example/Izumrudozero_3.webp", "/images/Example/Izumrudozero_1.webp", "/images/Example/Izumrudozero_2.webp"],
+    images: ["./images/Example/Izumrudozero_3.webp", "./images/Example/Izumrudozero_1.webp", "./images/Example/Izumrudozero_2.webp"],
   },
   {
     location: "Калуга. Желыбино", date: "май 2025", pack: "ОПТИМА",
-    images: ["/images/Example/Kaluga_1.webp", "/images/Example/Kaluga_2.webp", "/images/Example/Kaluga_3.webp", "/images/Example/Kaluga_4.webp"],
+    images: ["./images/Example/Kaluga_1.webp", "./images/Example/Kaluga_2.webp", "./images/Example/Kaluga_3.webp", "./images/Example/Kaluga_4.webp"],
   },
   {
     location: "Солнечногорск", date: "октябрь 2024", pack: "СТАНДАРТ",
-    images: ["/images/Example/solnechnogorsk_3.webp", "/images/Example/solnechnogorsk_2.webp", "/images/Example/solnechnogorsk_1.webp"],
+    images: ["./images/Example/solnechnogorsk_3.webp", "./images/Example/solnechnogorsk_2.webp", "./images/Example/solnechnogorsk_1.webp"],
   },
 ];
 
@@ -945,7 +945,7 @@ function Packs({ activePack, setActivePack, openModal }) {
               <div className={`flex flex-col gap-2 p-3 mt-2 mb-2 rounded-xl border border-dashed ${PROMO.ui.panelBorder} ${PROMO.ui.panelBg}`}>
                 {/* Логотип и заголовок в ряд */}
                 <div className="flex items-center gap-2">
-                    <img src="/images/grandline-logo.webp" alt="Grand_Line — партнер акции" className="h-14 w-auto" style={{maxWidth:'120px'}} loading="lazy"/>
+                    <img src="./images/grandline-logo.webp" alt="Grand_Line — партнер акции" className="h-14 w-auto" style={{maxWidth:'120px'}} loading="lazy"/>
                     <p className={`font-bold text-sm ${PROMO.ui.panelTitle}`}>
                         Акция: {`${PROMO.label} до ${PROMO.until}`}
                     </p>
@@ -1168,7 +1168,7 @@ function YandexReviewsWidget() {
   const reviewsUrl = "https://yandex.ru/maps-reviews-widget/104037212737?comments";
   
   // ИСПРАВЛЕНО: Путь к изображению
-  const qrCodeImagePath = "/images/qrcod_отзыв.webp"; 
+  const qrCodeImagePath = "./images/qrcod_отзыв.webp"; 
 
   // Код виджета, предоставленный пользователем, с небольшими изменениями для адаптивности.
   const widgetHtml = `<div style="width: 100%; height: 800px; overflow: hidden; position: relative; max-width: 560px; margin: 0 auto;">
@@ -1267,8 +1267,8 @@ function YandexMapWidget() {
   {/* Левая колонка: фото шоурума */}
   <div className="w-full h-full">
     <img 
-      src="/images/Офис Батура 2.webp" 
-      alt="Офис компании Батура" 
+      src="./images/Офис Батура 2.webp" 
+      alt="Офис строительной компании Батура" 
       className="w-full h-full object-cover"
       loading="lazy"
     />
@@ -1459,7 +1459,7 @@ export default function UyutLanding() {
               aria-label="Закрыть баннер акции"
               style={{lineHeight:1}}
             >×</button>
-            <img src="/images/grandline-logo.webp" alt="Grand Line — партнер акции" className="h-16 mb-2" style={{maxWidth:'200px'}} loading="lazy"/>
+            <img src="./images/grandline-logo.webp" alt="Grand Line — партнер акции" className="h-16 mb-2" style={{maxWidth:'200px'}} loading="lazy"/>
             <div className="text-xl font-extrabold text-red-700 text-center mb-1">СКИДКА ДО {PROMO.until} СГОРАЕТ!</div>
             <div className="text-base text-neutral-800 text-center mb-2">До конца акции осталось <b className="text-red-600 text-3xl mx-1">{daysLeft}</b> {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}</div>
             <div className="text-sm text-neutral-600 text-center mb-3">Не упустите персональную скидку {Math.round(PROMO.percent*100)}% на дом вашей мечты.</div>
@@ -1573,7 +1573,7 @@ export default function UyutLanding() {
 
             <div className="flex flex-col lg:flex-row items-center gap-8 mb-10 p-6 border border-red-200 bg-red-50 rounded-2xl shadow-lg">
         <div className="flex-shrink-0 w-full lg:w-auto">
-          <img src="/images/General/Генеральный партнер 1.webp" alt="Логотип Grand Line — генеральный партнер и поставщик материалов" className="w-full h-auto max-w-sm mx-auto lg:max-w-none lg:h-80" loading="lazy"/>
+          <img src="./images/General/Генеральный партнер 1.webp" alt="Логотип Grand Line — генеральный партнер и поставщик материалов" className="w-full h-auto max-w-sm mx-auto lg:max-w-none lg:h-80" loading="lazy"/>
                 </div>
                 {/* Add min-w-0 to avoid overflow in flex layout on small screens */}
                 <div className="flex-1 min-w-0">
@@ -1635,7 +1635,7 @@ export default function UyutLanding() {
                 
                 {/* Окна REHAU */}
                 <div className="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-200 shadow-md">
-                    <img src="/images/логотип Rehau.webp" alt="Логотип Rehau — профили для окон" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
+                    <img src="./images/логотип Rehau.webp" alt="Логотип Rehau — профили для окон" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
                     <span className="text-sm font-bold text-neutral-800">Окна REHAU</span>
                     <span className="text-xs text-neutral-500 text-center mt-1">
                         Энергоэффективность и долговечность. Вы получаете оригинальный немецкий профиль, который сохраняет тепло и не требует регулировки годами.
@@ -1644,7 +1644,7 @@ export default function UyutLanding() {
                 
                 {/* Утеплитель KNAUF */}
                 <div className="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-200 shadow-md">
-                    <img src="/images/логотип кнауф.webp" alt="Логотип Knauf — теплоизоляция" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
+                    <img src="./images/логотип кнауф.webp" alt="Логотип Knauf — теплоизоляция" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
                     <span className="text-sm font-bold text-neutral-800">Утеплитель KNAUF</span>
                     <span className="text-xs text-neutral-500 text-center mt-1">
                         Здоровье и Экология. Используем только безопасную, негорючую и экологически чистую теплоизоляцию, рекомендованную для жилых домов.
@@ -1653,7 +1653,7 @@ export default function UyutLanding() {
                 
                 {/* Изоляция ТЕХНОНИКОЛЬ */}
                 <div className="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-200 shadow-md">
-                    <img src="/images/лого технониколь.webp" alt="Логотип Технониколь — изоляционные материалы" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
+                    <img src="./images/лого технониколь.webp" alt="Логотип Технониколь — изоляционные материалы" className="h-16 w-auto mb-2" style={{maxWidth:'80px'}} loading="lazy"/>
                     <span className="text-sm font-bold text-neutral-800">Изоляция ТЕХНОНИКОЛЬ</span>
                     <span className="text-xs text-neutral-500 text-center mt-1">
                         Надежная защита от влаги. Базальтовый утеплитель. Изоляционные пленки для максимальной защиты каркаса от конденсата и влаги.
@@ -1734,7 +1734,7 @@ export default function UyutLanding() {
                 <p className="text-neutral-700 mb-4">Ваш дом всегда под нашим контролем. Мы работаем только в радиусе 200 км от МКАД, чтобы обеспечить личный, оперативный контроль за объектами. Поэтому можем гарантировать качество, соблюдение технологии и сдачу дома в срок.</p>
               </div>
               <div>
-                <img src="/images/География строительства.webp" alt="География строительства компании «Батура»" className="w-full rounded-2xl border border-neutral-200 shadow-xl" loading="lazy" />
+                <img src="./images/География строительства.webp" alt="География строительства компании «Батура»" className="w-full rounded-2xl border border-neutral-200 shadow-xl" loading="lazy" />
               </div>
             </div>
           </section>
@@ -1758,7 +1758,7 @@ export default function UyutLanding() {
                 {/* Фотография шоурума */}
                 <div className="w-full overflow-hidden rounded-2xl shadow-xl">
                   <img 
-                    src="/images/Офис Батура.webp" 
+                    src="./images/Офис Батура.webp" 
                     alt="Уютный, современный шоурум компании «Батура» в Москве" 
                     className="w-full h-auto object-cover border border-neutral-200" 
                     loading="lazy" 
@@ -1773,7 +1773,7 @@ export default function UyutLanding() {
                                         <div className="flex flex-col items-center justify-center p-3 bg-neutral-50 rounded-xl border border-neutral-100">
                       <div className="flex flex-col items-center">
                                                     <img
-                            src="/images/qrcod_маршрут в офис.webp"
+                            src="./images/qrcod_маршрут в офис.webp"
                             alt="QR-код для прокладывания маршрута в шоурум Батура на Яндекс Картах"
                             className="w-36 h-36 object-contain border-4 border-emerald-500 rounded-lg shadow-md"
                             loading="lazy"
