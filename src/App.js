@@ -1444,10 +1444,12 @@ export default function UyutLanding() {
         promoOffset={promoOffset}
         totalWithPromo={totalWithPromoStr}
       />
+    // ...весь остальной код остаётся без изменений...
+
       {/* Promo Popup (Exit Intent) */}
       {showPromoPopup && daysLeft > 0 && (
         <div className="fixed z-[99999] inset-0 flex items-start justify-center pointer-events-none sm:items-center sm:p-0 p-2">
-          <div className="mt-8 sm:mt-8 mt-4 bg-white border-2 border-red-500 shadow-2xl rounded-2xl px-2 sm:px-6 py-4 sm:py-5 max-w-full sm:max-w-md w-full flex flex-col items-center animate-fade-in pointer-events-auto relative overflow-x-auto">
+          <div className="mt-8 sm:mt-8 mt-4 bg-white border-2 border-red-500 shadow-2xl rounded-2xl px-2 sm:px-6 py-4 sm:py-5 max-w-full sm:max-w-md w-full flex flex-col items-center animate-fade-in pointer-events-auto relative">
             <button
               className="absolute top-2 right-2 text-neutral-400 hover:text-neutral-700 text-2xl font-bold"
               onClick={() => setShowPromoPopup(false)}
@@ -1456,15 +1458,15 @@ export default function UyutLanding() {
             >×</button>
             <img src="/images/grandline-logo.webp" alt="Grand Line — партнер акции" className="h-16 mb-2" style={{maxWidth:'200px'}} loading="lazy"/>
             <div className="text-xl font-extrabold text-red-700 text-center mb-1">СКИДКА ДО {PROMO.until} СГОРАЕТ!</div>
-            <div className="text-base text-neutral-800 text-center mb-2">До конца акции осталось <b className="text-red-600 text-3xl mx-1">{daysLeft}</b> {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}.</div>
+            <div className="text-base text-neutral-800 text-center mb-2">До конца акции осталось <b className="text-red-600 text-3xl mx-1">{daysLeft}</b> {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}</div>
             <div className="text-sm text-neutral-600 text-center mb-3">Не упустите персональную скидку {Math.round(PROMO.percent*100)}% на дом вашей мечты.</div>
             
             <button
               type="button"
               onClick={() => {
                 setShowPromoPopup(false);
-                // Прокрутка к форме CTA
-                scrollToCTA();
+                // Скроллим к секции "Строим только из проверенных материалов!"
+                document.getElementById('partners')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }}
               className="mt-3 w-full px-5 py-3 rounded-xl bg-red-600 text-white font-extrabold text-lg shadow-xl hover:bg-red-700 transition"
             >
@@ -1476,6 +1478,8 @@ export default function UyutLanding() {
           </div>
         </div>
       )}
+
+// ...весь остальной код остаётся без изменений...
   {/* Добавляем отступ сверху, равный высоте шапки + промо-полосе */}
   <div className="min-h-screen bg-neutral-50 text-neutral-900" style={{ paddingTop: promoOffset + 68 }}>
         <main>
