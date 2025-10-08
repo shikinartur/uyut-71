@@ -26,10 +26,10 @@ const CONTACTS = {
 
 /* === PROMO: единая настройка акции для всего сайта) === */
 const PROMO = {
-  enabled: true,                            // вкл/выкл акцию
+  enabled: true,                            // вкл/выкл акцию true/false
   percent: 0.07,                            // размер скидки (например, 0.07 для 7%)
   until: "10 октября",                      // срок действия акции
-  exitPopupEnabled: false, 
+  exitPopupEnabled: true,                   // срок вкл/выкл Popup true/false
   ui: {
     badgeBg: "bg-red-100",
     badgeText: "text-red-700",
