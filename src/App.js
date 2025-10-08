@@ -28,7 +28,8 @@ const CONTACTS = {
 const PROMO = {
   enabled: true,                            // вкл/выкл акцию true/false
   percent: 0.07,                            // размер скидки (например, 0.07 для 7%)
-  until: "10 октября",                      // срок действия акции
+  until: "10 октября",                      // срок действия акции (текст)
+  endDate: { year: 2025, month: 10, day: 10 }, // дата завершения акции (месяц: 1-12)
   exitPopupEnabled: true,                   // срок вкл/выкл Popup true/false
   ui: {
     badgeBg: "bg-red-100",
@@ -1309,8 +1310,8 @@ function SuccessMessage({ onReset, title, subtitle }) {
 export default function UyutLanding() {
   // === State for promo popup ===
   const [showPromoPopup, setShowPromoPopup] = useState(false);
-  // Calculate days left until 10 октября 2025
-  const promoEndDate = new Date(2025, 9, 10); // Месяцы с 0, октябрь = 9
+  // Calculate days left until promo end date
+  const promoEndDate = new Date(PROMO.endDate.year, PROMO.endDate.month - 1, PROMO.endDate.day); // Месяцы с 0, поэтому month - 1
   const today = new Date();
   const daysLeft = Math.max(0, Math.ceil((promoEndDate - today) / (1000 * 60 * 60 * 24)));
   
