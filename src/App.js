@@ -667,7 +667,7 @@ function Modal({ images = [], startIndex = 0, onClose }) {
 
 
 // Packs Section (from App.js with App2.js enhancements)
-function Packs({ activePack, setActivePack, openModal }) {
+function Packs({ activePack, setActivePack }) {
     return (
         <section id="packs" className="mx-auto max-w-7xl px-4 py-8">
             <h3 className="text-2xl font-bold mb-4">Комплектации</h3>
@@ -675,13 +675,14 @@ function Packs({ activePack, setActivePack, openModal }) {
                 {Object.values(PACKS).map((p) => (
                     <div
                         key={p.key}
+                        onClick={() => setActivePack(p.key)}
                         // Добавление hover-эффекта для карточек
-                        className={`text-left rounded-2xl border transition hover:shadow-xl hover:scale-[1.01] duration-200 ${
+                        className={`cursor-pointer text-left rounded-2xl border transition hover:shadow-xl hover:scale-[1.01] duration-200 ${
                             activePack === p.key ? "border-emerald-600 ring-4 ring-emerald-200" : "border-neutral-200"
                         }`}
                     >
                         <div className="relative">
-                            <ImageSlider images={PHOTOS[p.key]} small onOpen={openModal} />
+                            <ImageSlider images={PHOTOS[p.key]} small />
                             {p.key === "optima" && (
                                 <span className="absolute top-2 left-2 text-[10px] uppercase bg-emerald-600 text-white px-3 py-1 rounded-full font-bold shadow-md">
                                     🏆 Хит продаж
@@ -694,10 +695,7 @@ function Packs({ activePack, setActivePack, openModal }) {
                             </span>
 
                         </div>
-                        <div 
-                            className="p-4 cursor-pointer"
-                            onClick={() => setActivePack(p.key)}
-                        >
+                        <div className="p-4">
                             <div className="flex flex-col gap-1 mb-2">
                                 <h4 className="text-xl font-bold text-neutral-900">{p.label}</h4>
                                 <p className="text-sm text-neutral-600">{p.subLabel}</p>
@@ -1561,7 +1559,7 @@ export default function UyutLanding() {
           </section>
 
           <FloorPlans openModal={openModal} />
-          <Packs activePack={activePack} setActivePack={setActivePack} openModal={openModal} />
+          <Packs activePack={activePack} setActivePack={setActivePack} />
           {/* Передаем stickyTop в Калькулятор */}
           <Calculator activePack={activePack} setActivePack={setActivePack} totalWithPromoRef={totalWithPromoRef} stickyTop={stickyTop} />
         {/* Наши партнеры: Оптимизированный маркетинговый раздел */}
