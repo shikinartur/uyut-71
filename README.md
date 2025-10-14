@@ -78,7 +78,7 @@ npm run build
 2. В разделе "Source" выберите "GitHub Actions"
 3. GitHub Actions workflow уже настроен в `.github/workflows/deploy.yml`
 4. При каждом push в ветку `main` сайт будет автоматически публиковаться
-5. Сайт будет доступен по адресу: `https://[ваш-username].github.io/uyut-71/`
+5. Сайт будет доступен по адресу: `https://[ваш-username].github.io/[название-репозитория]/`
 
 **Альтернатива:** Ручная публикация на GitHub Pages (без GitHub Actions):
 ```bash
