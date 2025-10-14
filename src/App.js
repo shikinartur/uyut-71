@@ -123,7 +123,7 @@ PROMO.bannerText = `Успейте зафиксировать цену — ск�
  * Замените эту заглушку на ваш реальный URL Webhook из Bitrix24
  * (например, https://yourcompany.bitrix24.ru/rest/1/webhook_code/)
  */
-const API_ENDPOINT = "https://your-bitrix24-webhook.com/endpoint/"; 
+const API_ENDPOINT = "https://batura.bitrix24.ru/rest/11/8o01eugvy1rbseqt/crm.lead.add.json"; 
 
 /**
  * Универсальная функция для отправки данных формы на сервер.
