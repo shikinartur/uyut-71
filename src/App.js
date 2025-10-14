@@ -1676,7 +1676,7 @@ export default function UyutLanding() {
                 ⭐ Гарантия 15 лет | Срок 7 недель | Фикс-цена
               </span>
               <h1 className="mt-4 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-neutral-900">
-                TEST Ваш дом «Уют-71» по фикс-цене — <span className="text-emerald-700">ЗА 7 НЕДЕЛЬ.</span>
+                Ваш дом «Уют-71» по фикс-цене — <span className="text-emerald-700">ЗА 7 НЕДЕЛЬ.</span>
               </h1>
               <p className="mt-3 text-red-600 font-semibold">
                 {PROMO.bannerText}
