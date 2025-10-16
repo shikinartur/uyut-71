@@ -137,6 +137,8 @@ async function sendDataToApi(data, source) {
     timestamp: new Date().toISOString(),
     ...data,
   };
+  console.log(payload);
+  
   
   // В реальном приложении здесь будет логика exponential backoff для повторных попыток
   try {
