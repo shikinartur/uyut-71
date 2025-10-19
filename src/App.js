@@ -16,6 +16,10 @@ import officeBatura2Url from "./images/office-batura-2.webp";
 import qrCodeReviewUrl from "./images/qrcode-review.webp";
 import qrCodeRouteUrl from "./images/qrcode-route.webp";
 
+// Конфигурация
+import { CONTACTS } from './config/contacts';
+import { PROMO } from './config/promo';
+
 // Комплектации
 import standard1 from "./images/pack-standard-1.webp";
 import standard2 from "./images/pack-standard-2.webp";
@@ -84,38 +88,6 @@ function ProtectedImage({ src, alt, className, style, loading, onClick, ...props
   );
 }
 
-/* ================= Data & Config ================= */
-
-const CONTACTS = {
-  phone: "8 (495) 212-13-77",
-  phoneHref: "+74952121377",
-  email: "dom@batura.ru",
-  address: "Москва, пр. 60-летия Октября, 9с2, офис 217",
-  address2: "метро Академическая (12 мин пешком)",
-  hours: "ПН–СБ 10:00 – 20:00 (по записи)",
-  };
-
-/* === PROMO: единая настройка акции для всего сайта) === */
-const PROMO = {
-  enabled: true,                            // вкл/выкл акцию true/false
-  percent: 0.07,                            // размер скидки (например, 0.07 для 7%)
-  until: "15 октября",                      // срок действия акции (текст)
-  endDate: { year: 2025, month: 10, day: 15 }, // дата завершения акции (месяц: 1-12)
-  exitPopupEnabled: false,                   // срок вкл/выкл Popup true/false
-  ui: {
-    badgeBg: "bg-red-100",
-    badgeText: "text-red-700",
-    panelBg: "bg-red-50",
-    panelBorder: "border-red-300",
-    panelTitle: "text-red-700",
-    panelText: "text-red-600",
-    summaryText: "text-red-700",
-  },
-};
-PROMO.label = `Скидка ${Math.round(PROMO.percent*100)}%`;
-PROMO.shortTag = `Скидка до ${PROMO.until}`;
-PROMO.bannerText = `Успейте зафиксировать цену — скидка до ${PROMO.until}!`; 
-
 /* === API Configuration === */
 
 /**
@@ -132,36 +104,151 @@ const API_ENDPOINT = "https://batura.bitrix24.ru/rest/11/8o01eugvy1rbseqt/crm.le
  * @returns {Promise<boolean>} - Успех/неудача отправки.
  */
 async function sendDataToApi(data, source) {
-  const payload = {
-    source: source,
-    timestamp: new Date().toISOString(),
-    ...data,
+  // Формируем данные в формате, который ожидает Bitrix24 API
+  const bitrixFields = {
+    TITLE: `${data.lead_type || 'Заявка с сайта'} - ${data.name || 'Без имени'}`,
+    NAME: data.name || '',
+    PHONE: [{ VALUE: data.phone || '', VALUE_TYPE: 'WORK' }],
+    EMAIL: data.email ? [{ VALUE: data.email, VALUE_TYPE: 'WORK' }] : undefined,
+    COMMENTS: generateComments(data, source),
+    SOURCE_ID: 'WEB', // Источник - веб-сайт
+    SOURCE_DESCRIPTION: source,
+    UTM_SOURCE: 'uyut-71.my',
+    UTM_MEDIUM: 'landing',
+    UTM_CAMPAIGN: source,
   };
-  console.log(payload);
+
+  // Убираем undefined поля
+  Object.keys(bitrixFields).forEach(key => {
+    if (bitrixFields[key] === undefined) {
+      delete bitrixFields[key];
+    }
+  });
+
+  // Bitrix24 ожидает параметры как отдельные поля в URL-encoded формате
+  const urlParams = new URLSearchParams();
   
+  // Добавляем каждое поле как отдельный параметр
+  Object.entries(bitrixFields).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      // Для массивов (PHONE, EMAIL) добавляем каждый элемент отдельно
+      value.forEach((item, index) => {
+        if (typeof item === 'object') {
+          Object.entries(item).forEach(([subKey, subValue]) => {
+            urlParams.append(`fields[${key}][${index}][${subKey}]`, subValue);
+          });
+        } else {
+          urlParams.append(`fields[${key}][${index}]`, item);
+        }
+      });
+    } else {
+      urlParams.append(`fields[${key}]`, value);
+    }
+  });
+
+  console.log('Отправляемые данные в Bitrix24:', urlParams.toString());
   
-  // В реальном приложении здесь будет логика exponential backoff для повторных попыток
   try {
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      // Отправляем данные в формате JSON
-      body: JSON.stringify(payload),
+      // Bitrix24 ожидает данные в формате URL-encoded
+      body: urlParams.toString(),
     });
 
-    if (response.ok) {
-      console.log(`Заявка успешно отправлена в Bitrix. Источник: ${source}`);
+    const responseData = await response.json();
+    
+    if (response.ok && responseData.result) {
+      console.log(`Заявка успешно отправлена в Bitrix. ID лида: ${responseData.result}. Источник: ${source}`);
       return true;
     } else {
-      console.error(`Ошибка при отправке в Bitrix (HTTP ${response.status}). Источник: ${source}`, await response.text());
+      console.error(`Ошибка при отправке в Bitrix (HTTP ${response.status}). Источник: ${source}`, responseData);
       return false;
     }
   } catch (error) {
     console.error(`Ошибка сети/соединения при отправке в Bitrix. Источник: ${source}`, error);
     return false;
   }
+}
+
+// Функция для генерации комментариев с детальной информацией
+function generateComments(data, source) {
+  let comments = `Источник: ${source}\n`;
+  comments += `Дата: ${new Date().toLocaleString('ru-RU')}\n\n`;
+  
+  // Добавляем специфичную информацию в зависимости от типа заявки
+  if (data.lead_type === 'Calculator (Fixed Price)') {
+    comments += `=== КАЛЬКУЛЯТОР ===\n`;
+    comments += `Комплектация: ${data.pack_label || 'Не указана'}\n`;
+    comments += `Базовая цена: ${data.base_price ? data.base_price.toLocaleString('ru-RU') + ' ₽' : 'Не указана'}\n`;
+    comments += `Дополнения: ${data.choices_sum ? data.choices_sum.toLocaleString('ru-RU') + ' ₽' : '0 ₽'}\n`;
+    comments += `Доп. услуги: ${data.addons_sum ? data.addons_sum.toLocaleString('ru-RU') + ' ₽' : '0 ₽'}\n`;
+    comments += `Скидка: ${data.promo_amount ? data.promo_amount.toLocaleString('ru-RU') + ' ₽' : '0 ₽'}\n`;
+    comments += `ИТОГО: ${data.total_final ? data.total_final.toLocaleString('ru-RU') + ' ₽' : 'Не указано'}\n\n`;
+    
+    if (data.config_choices) {
+      comments += `Выбранные опции:\n`;
+      Object.entries(data.config_choices).forEach(([key, value]) => {
+        comments += `- ${key}: ${value}\n`;
+      });
+    }
+    
+    if (data.config_addons && data.config_addons.length > 0) {
+      comments += `Дополнительные услуги:\n`;
+      data.config_addons.forEach(addon => {
+        comments += `- ${addon}\n`;
+      });
+      if (data.addons_selected_keys && data.addons_selected_keys.length > 0) {
+        comments += `Коды доп. услуг: ${data.addons_selected_keys.join(', ')}\n`;
+      }
+    }
+    
+    if (data.notes) {
+      comments += `\nПожелания клиента:\n${data.notes}\n`;
+    }
+  } else if (data.lead_type === 'Promo Fixation (Grand Line block)') {
+    comments += `=== ФИКСАЦИЯ СКИДКИ ===\n`;
+    comments += `Размер скидки: ${data.promo_percent ? Math.round(data.promo_percent * 100) + '%' : 'Не указан'}\n`;
+    comments += `Действует до: ${data.promo_until || 'Не указано'}\n`;
+  } else if (data.lead_type === 'Appointment Request (Company Section)') {
+    comments += `=== ЗАПИСЬ НА КОНСУЛЬТАЦИЮ ===\n`;
+    if (data.appointment_date) {
+      comments += `Желаемая дата: ${data.appointment_date}\n`;
+    }
+    if (data.appointment_time) {
+      comments += `Желаемое время: ${data.appointment_time}\n`;
+    }
+  } else if (data.lead_type === 'Consultation CTA') {
+    comments += `=== ЗАПРОС КОНСУЛЬТАЦИИ ===\n`;
+    if (data.notes) {
+      comments += `\nПожелания клиента:\n${data.notes}\n`;
+    }
+  }
+  
+  // Добавляем все дополнительные поля формы в конец комментария
+  const additionalFields = [];
+  Object.entries(data).forEach(([key, value]) => {
+    // Пропускаем стандартные поля, которые уже обработаны выше
+    const standardFields = ['name', 'phone', 'email', 'lead_type', 'source', 'timestamp', 
+                           'pack_key', 'pack_label', 'total_final', 'config_choices', 'config_addons',
+                           'base_price', 'choices_sum', 'addons_sum', 'promo_amount', 'promo_percent', 
+                           'promo_until', 'appointment_date', 'appointment_time', 'notes'];
+    
+    if (!standardFields.includes(key) && value && value.toString().trim() !== '') {
+      additionalFields.push(`${key}: ${value}`);
+    }
+  });
+  
+  if (additionalFields.length > 0) {
+    comments += `\n=== ДОПОЛНИТЕЛЬНЫЕ ДАННЫЕ ===\n`;
+    additionalFields.forEach(field => {
+      comments += `${field}\n`;
+    });
+  }
+  
+  return comments;
 }
 
 // Data definitions
@@ -971,6 +1058,7 @@ function Packs({ activePack, setActivePack, openModal }) {
         
         if (!payload.name || !payload.phone) return;
 
+        const selectedAddons = ADDONS.filter(a => addons[a.key]);
         const data = {
             ...payload,
             lead_type: "Calculator (Fixed Price)",
@@ -978,7 +1066,8 @@ function Packs({ activePack, setActivePack, openModal }) {
             pack_label: pack.label,
             total_final: totalWithPromo,
             config_choices: choices,
-            config_addons: ADDONS.filter(a => addons[a.key]).map(a => a.label),
+            config_addons: selectedAddons.map(a => a.label),
+            addons_selected_keys: selectedAddons.map(a => a.key),
             // Добавляем все расчетные данные для удобства Bitrix
             base_price: basePrice,
             choices_sum: choicesSum,
