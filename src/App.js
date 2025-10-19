@@ -575,7 +575,7 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
     className="h-14 w-auto"   
   />
   <span className="block font-bold text-base sm:text-lg">
-    Каркасный дом «Уют-71»
+    Каркасный дом «Уют-71ФИКС»
   </span>
 </a>
         <nav className="hidden md:flex gap-6 text-sm font-medium" aria-label="Основная навигация">
@@ -1399,7 +1399,7 @@ function Gallery({ openModal }) {
 function FloorPlans({ openModal }) {
     return (
         <section id="plans" className="mx-auto max-w-7xl px-4 py-6">
-            <h3 className="text-2xl font-bold mb-3">Планировка: Дом «Уют-71»</h3>
+            <h3 className="text-2xl font-bold mb-3">Планировка: Дом «Уют-71ФИКС»</h3>
             <div className="grid md:grid-cols-2 gap-4">
                 <div
                     className="bg-white rounded-2xl border border-neutral-200 p-5 cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300"
@@ -1411,7 +1411,7 @@ function FloorPlans({ openModal }) {
                     <h4 className="text-lg font-bold mb-4">Посмотреть площади и размеры</h4>
                     <ProtectedImage
                         src={FLOORPLANS.empty}
-                        alt="Планировка дома «Уют-71» без мебели"
+                        alt="Планировка дома «Уют-71ФИКС» без мебели"
                         className="w-full max-h-[420px] object-contain rounded-xl"
                         loading="lazy"
                     />
@@ -1426,7 +1426,7 @@ function FloorPlans({ openModal }) {
                     <h4 className="text-lg font-bold mb-4">Вариант расстановки мебели</h4>
                     <ProtectedImage
                         src={FLOORPLANS.furnished}
-                        alt="Планировка дома «Уют-71» с мебелью"
+                        alt="Планировка дома «Уют-71ФИКС» с мебелью"
                         className="w-full max-h-[420px] object-contain rounded-xl"
                         loading="lazy"
                     />
@@ -1767,7 +1767,7 @@ export default function UyutLanding() {
                 ⭐ Гарантия 15 лет | Срок 7 недель | Фикс-цена
               </span>
               <h1 className="mt-4 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-neutral-900">
-                ТЕСТ Ваш дом «Уют-71» по фикс-цене — <span className="text-emerald-700">ЗА 7 НЕДЕЛЬ.</span>
+                Ваш дом «Уют-71ФИКС» по фикс-цене — <span className="text-emerald-700">ЗА 7 НЕДЕЛЬ.</span>
               </h1>
               <p className="mt-3 text-red-600 font-semibold">
                 {PROMO.bannerText}
@@ -2297,7 +2297,7 @@ export default function UyutLanding() {
         <div className="fixed right-4 bottom-20 z-40 md:hidden flex flex-col gap-2">
           {/* WhatsApp */}
           <a
-            href={`https://wa.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71».`}
+            href={`https://wa.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71ФИКС».`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
@@ -2335,7 +2335,7 @@ export default function UyutLanding() {
                     className="h-12 w-auto"
                   />
                   <span className="font-bold text-base">
-                    Каркасный дом «Уют-71» от компании «Батура»
+                    Каркасный дом «Уют-71ФИКС» от компании «Батура»
                   </span>
                 </div>
                 <p className="text-neutral-300 mb-3 max-w-md text-sm">
@@ -2346,7 +2346,7 @@ export default function UyutLanding() {
                 </p>
                 <div className="flex gap-4">
                   <a
-                    href={`https://wa.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71».`}
+                    href={`https://wa.me/${CONTACTS.phoneHref.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71ФИКС».`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors"
