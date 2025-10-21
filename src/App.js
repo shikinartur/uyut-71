@@ -114,7 +114,7 @@ async function sendDataToApi(data, source) {
     PHONE: [{ VALUE: data.phone || '', VALUE_TYPE: 'WORK' }],
     EMAIL: data.email ? [{ VALUE: data.email, VALUE_TYPE: 'WORK' }] : undefined,
     COMMENTS: generateComments(data, source),
-    SOURCE_ID: 'WEB', // Источник - веб-сайт
+    SOURCE_ID: '5', // Источник - веб-сайт
     SOURCE_DESCRIPTION: source,
     UTM_SOURCE: 'uyut-71',
     UTM_MEDIUM: 'landing',
