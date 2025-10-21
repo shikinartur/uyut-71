@@ -912,34 +912,27 @@ function Packs({ activePack, setActivePack, openModal }) {
                 ))}
               </select>
             </div>
-          </div>
-
-          {/* БЛОК ИПОТЕКИ С ЭСКРОУ-СЧЕТОМ */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-3">
-            <div className="flex flex-col gap-2">
-              {/* Заголовок */}
-              <h4 className="text-sm font-semibold text-blue-800">
-                💳 Возможна ипотека с эскроу-счетом
-              </h4>
-              
-              {/* Логотипы банков */}
-              <div className="flex items-center justify-center gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-semibold mb-2 text-blue-800">
+                Можно в ипотеку!
+              </label>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <img 
                   src={sberbankLogoUrl} 
                   alt="Сбербанк" 
-                  className="h-6 w-auto object-contain" 
+                  className="h-12 w-auto object-contain flex-shrink-0" 
                   loading="lazy"
                 />
                 <img 
                   src={domrfLogoUrl} 
                   alt="ДомРФ" 
-                  className="h-6 w-auto object-contain" 
+                  className="h-12 w-auto object-contain flex-shrink-0" 
                   loading="lazy"
                 />
                 <img 
                   src={vtbLogoUrl} 
                   alt="ВТБ" 
-                  className="h-6 w-auto object-contain" 
+                  className="h-12 w-auto object-contain flex-shrink-0" 
                   loading="lazy"
                 />
               </div>
