@@ -10,6 +10,9 @@ import grandlineLogoUrl from "./images/grandline-logo.webp";
 import rehauLogoUrl from "./images/rehau-logo.webp";
 import knaufLogoUrl from "./images/knauf-logo.webp";
 import technonicolLogoUrl from "./images/technonicol-logo.webp";
+import sberbankLogoUrl from "./images/sberbank-logo.webp";
+import domrfLogoUrl from "./images/domrf-logo.webp";
+import vtbLogoUrl from "./images/vtb-logo.webp";
 import geoMapUrl from "./images/geography-map.webp";
 import officeBaturaUrl from "./images/office-batura-1.webp";
 import officeBatura2Url from "./images/office-batura-2.webp";
@@ -1113,6 +1116,40 @@ function Packs({ activePack, setActivePack, openModal }) {
               </select>
             </div>
           </div>
+
+          {/* БЛОК ИПОТЕКИ С ЭСКРОУ-СЧЕТОМ */}
+          <div className="bg-white rounded-2xl border border-neutral-200 p-3">
+            <div className="flex flex-col gap-2">
+              {/* Заголовок */}
+              <h4 className="text-sm font-semibold text-blue-800">
+                💳 Возможна ипотека с эскроу-счетом
+              </h4>
+              
+              {/* Логотипы банков */}
+              <div className="flex items-center justify-center gap-4">
+                <img 
+                  src={sberbankLogoUrl} 
+                  alt="Сбербанк" 
+                  className="h-6 w-auto object-contain" 
+                  loading="lazy"
+                />
+                <img 
+                  src={domrfLogoUrl} 
+                  alt="ДомРФ" 
+                  className="h-6 w-auto object-contain" 
+                  loading="lazy"
+                />
+                <img 
+                  src={vtbLogoUrl} 
+                  alt="ВТБ" 
+                  className="h-6 w-auto object-contain" 
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+          {/* КОНЕЦ БЛОКА ИПОТЕКИ */}
+
           <div className="bg-white rounded-2xl border border-neutral-200 p-5">
             <h4 className="text-lg font-semibold mb-3">Основа комплектации</h4>
             <ul className="grid md:grid-cols-2 gap-2 text-sm text-neutral-700">
@@ -1206,6 +1243,7 @@ function Packs({ activePack, setActivePack, openModal }) {
                 <span>Конфигурация</span>
                 <b>{choicesSum >= 0 ? `+${rub(choicesSum)}` : rub(choicesSum)}</b>
               </div>
+
               <div className="flex justify-between">
                 <span>Добавлено в расчет</span>
                 <b>{addonsSum >= 0 ? `+${rub(addonsSum)}` : rub(addonsSum)}</b>
