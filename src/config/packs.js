@@ -69,7 +69,7 @@ const PACKS = {
     label: "ОПТИМА",
     subLabel: "Хит продаж. Оптимальный баланс. Фасад и крыша Grand_Line",
     warranty: 15,
-    basePrice: 4_792_000,
+    basePrice: 4_625_000,
     fixedDetails: {
       facadeEnd:
         `Фасад (бока): <b>профнастил</b> Grand_Line C21R Drap TR, RAL 7024 (Графитовый серый)`,
@@ -134,7 +134,7 @@ const PACKS = {
     label: "КВАДРО-БРУС",
     subLabel: "Люкс отделка: маталлический сайдинг и фальцевая крыша Grand_Line",
     warranty: 15,
-    basePrice: 4_236_000,
+    basePrice: 4_736_000,
     fixedDetails: {
       facadeEnd:
         `Фасад (бока): <b>Металлосайдинг</b> Квадро-брус Grand_Line RAL 7024 (Графитовый серый)`,
