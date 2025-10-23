@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
+import InputMask from "react-input-mask";
 import "./index.css";
 // import { Helmet } from "react-helmet";
 import { sendDataToApi, generateComments } from "./config/bitrix24"; 
@@ -950,16 +951,13 @@ function Packs({ activePack, setActivePack, openModal }) {
                   />
                 </div>
                 <div>
-                  <input
+                  <InputMask
+                    mask="+7 (999) 999-99-99"
                     name="phone"
-                    type="tel"
                     required
                     placeholder="+7 (XXX) XXX-XX-XX"
                     className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-900"
                     inputMode="tel"
-                    // Паттерн для телефонного номера в формате 8 (XXX) XXX-XX-XX
-                    pattern="^((\+7|7|8)[\s\-\(\)]*)?(\d{3})[\s\-\)]*(\d{3})[\s\-]*(\d{2})[\s\-]*(\d{2})$"
-                    maxLength={18}
                   />
                 </div>
                 <div>
@@ -1550,15 +1548,13 @@ export default function UyutLanding() {
                               placeholder="Ваше имя"
                               className="w-full px-3 py-2 rounded-lg border border-neutral-300 mb-2"
                           />
-                          <input
-                              type="tel"
+                          <InputMask
+                              mask="+7 (999) 999-99-99"
                               name="phone"
                               required
                               placeholder="+7 (XXX) XXX-XX-XX"
-                              className="w-full px-3 py-2 rounded-lg border border-neutral-300 mb-3"
+                              className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                               inputMode="tel"
-                              pattern="^((\+7|7|8)[\s\-\(\)]*)?(\d{3})[\s\-\)]*(\d{3})[\s\-]*(\d{2})[\s\-]*(\d{2})$"
-                              maxLength={18}
                           />
                           <button
                               type="submit"
@@ -1787,16 +1783,14 @@ export default function UyutLanding() {
                             placeholder="Ваше имя"
                             className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                         />
-                        <input
-                            type="tel"
-                            name="phone"
-                            required
-                            placeholder="+7 (XXX) XXX-XX-XX"
-                            className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
-                            inputMode="tel"
-                            pattern="^((\+7|7|8)[\s\-\(\)]*)?(\d{3})[\s\-\)]*(\d{3})[\s\-]*(\d{2})[\s\-]*(\d{2})$"
-                            maxLength={18}
-                        />
+                        <InputMask
+                              mask="+7 (999) 999-99-99"
+                              name="phone"
+                              required
+                              placeholder="+7 (XXX) XXX-XX-XX"
+                              className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
+                              inputMode="tel"
+                          />
                         <div className="grid grid-cols-2 gap-3">
                           <input
                               type="date"
@@ -1892,15 +1886,13 @@ export default function UyutLanding() {
                   placeholder="Ваше имя"
                   className="w-full px-3 py-3 rounded-xl border-2 border-neutral-300 focus:outline-none focus:ring-4 focus:ring-emerald-300"
                 />
-                <input
-                  type="tel"
+                <InputMask
+                  mask="+7 (999) 999-99-99"
                   name="phone"
                   required
                   placeholder="+7 (XXX) XXX-XX-XX — Телефон"
                   className="w-full px-3 py-3 rounded-xl border-2 border-neutral-300 focus:outline-none focus:ring-4 focus:ring-emerald-300"
                   inputMode="tel"
-                  pattern="^((\+7|7|8)[\s\-\(\)]*)?(\d{3})[\s\-\)]*(\d{3})[\s\-]*(\d{2})[\s\-]*(\d{2})$"
-                  maxLength={18}
                 />
                 
                 {/* ПРАВКА 1: Поле с вопросом "С чего начать?" */}
