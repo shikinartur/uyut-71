@@ -16,7 +16,7 @@ export const API_ENDPOINT = "https://batura.bitrix24.ru/rest/11/8o01eugvy1rbseqt
 export async function sendDataToApi(data, source) {
   // Формируем данные в формате, который ожидает Bitrix24 API
   const bitrixFields = {
-    TITLE: `${data.lead_type || 'Заявка с сайта'} - ${data.name || 'Без имени'}`,
+    TITLE: `Уют-71ФИКС - ${data.lead_type || 'Заявка с сайта'} - ${data.name || 'Без имени'}`,
     NAME: data.name || '',
     PHONE: [{ VALUE: data.phone || '', VALUE_TYPE: 'WORK' }],
     EMAIL: data.email ? [{ VALUE: data.email, VALUE_TYPE: 'WORK' }] : undefined,
@@ -85,7 +85,7 @@ export async function sendDataToApi(data, source) {
 
 // Функция для генерации комментариев с детальной информацией
 export function generateComments(data, source) {
-  let comments = `Источник: ${source}\n`;
+  let comments = `Форма: ${source}\n`;
   comments += `Дата: ${new Date().toLocaleString('ru-RU')}\n\n`;
   
   // Добавляем специфичную информацию в зависимости от типа заявки

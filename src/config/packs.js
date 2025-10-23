@@ -5,7 +5,7 @@ const PACKS = {
     label: "СТАНДАРТ",
     subLabel: "Базовый фасад: имитация бруса (покраска в подарок). Крыша металлочерепица Grand_Line",
     warranty: 15,
-    basePrice: 4_565_000,
+    basePrice: 4_431_000,
     fixedDetails: {
       facadeEnd: `Фасад (бока): <b>имитация бруса</b>, сорт АВ (покраска в подарок)`,
       facadeSide: `Фасад (торцы): <b>имитация бруса</b>, сорт АВ (покраска в подарок)`,
@@ -134,7 +134,7 @@ const PACKS = {
     label: "КВАДРО-БРУС",
     subLabel: "Люкс отделка: маталлический сайдинг и фальцевая крыша Grand_Line",
     warranty: 15,
-    basePrice: 4_736_000,
+    basePrice: 4_807_000,
     fixedDetails: {
       facadeEnd:
         `Фасад (бока): <b>Металлосайдинг</b> Квадро-брус Grand_Line RAL 7024 (Графитовый серый)`,
@@ -199,7 +199,7 @@ const PACKS = {
 const ADDONS = [
   { key: "lamination", label: "Ламинация окон снаружи, тёмно-серый", price: 119_400 },
   { key: "snow", label: "Снегозадержание Grand_Line RAL 7024", price: 46_700 },
-  { key: "drain", label: "Водосточная система Grand_Line RAL 7024", price: 106_400 },
+  { key: "drain", label: "Водосточная система Grand_Line RAL 7024", price: 50_200 },
   // { key: "deck", label: "Террасная доска ДПК Grand_Line 140 мм (графит)", price: 190_000 },
   { key: "inner_comms", label: "Коммуникации", noPrice: true },
   { key: "finish_turnkey", label: "Чистовая отделка под ключ", noPrice: true },
