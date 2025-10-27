@@ -633,7 +633,7 @@ function Packs({ activePack, setActivePack, openModal }) {
 
 // Calculator Section (from App.js with App2.js enhancements)
 // ДОБАВЛЕНА: stickyTop в аргументы для расчета смещения sticky элемента
-  function Calculator({ activePack, setActivePack, totalWithPromoRef, stickyTop = 92 }) {
+  function Calculator({ activePack, setActivePack, totalWithPromoRef, stickyTop = 92, calculatorCaptchaToken, setCalculatorCaptchaToken }) {
     // Fallback to avoid ReferenceError if old HMR chunk still references promoOffset
     const pack = PACKS[activePack];
     const [choices, setChoices] = useState(() => {
@@ -1537,7 +1537,14 @@ export default function UyutLanding() {
           <FloorPlans openModal={openModal} />
           <Packs activePack={activePack} setActivePack={setActivePack} openModal={openModal} />
           {/* Передаем stickyTop в Калькулятор */}
-          <Calculator activePack={activePack} setActivePack={setActivePack} totalWithPromoRef={totalWithPromoRef} stickyTop={stickyTop} />
+          <Calculator 
+            activePack={activePack} 
+            setActivePack={setActivePack} 
+            totalWithPromoRef={totalWithPromoRef} 
+            stickyTop={stickyTop}
+            calculatorCaptchaToken={calculatorCaptchaToken}
+            setCalculatorCaptchaToken={setCalculatorCaptchaToken}
+          />
         {/* Наши партнеры: Оптимизированный маркетинговый раздел */}
         <section id="partners" className="mx-auto max-w-7xl px-4 py-10">
           <div className="bg-white rounded-2xl border border-neutral-200 shadow-xl p-4 sm:p-8">
