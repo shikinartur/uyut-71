@@ -2,7 +2,8 @@ import React, { useMemo, useState, useRef, useEffect } from "react";
 import InputMask from "react-input-mask";
 import "./index.css";
 // import { Helmet } from "react-helmet";
-import { sendDataToApi, generateComments } from "./config/bitrix24"; 
+import { sendDataToApi, generateComments } from "./config/bitrix24";
+import { SmartCaptcha } from "./SmartCaptcha"; 
 
 // ====================================================================
 // ==================== ИМПОРТ ИЗОБРАЖЕНИЙ (Относительные пути для Webpack) =============
@@ -697,6 +698,12 @@ function Packs({ activePack, setActivePack, openModal }) {
         const payload = Object.fromEntries(fd.entries());
         
         if (!payload.name || !payload.phone) return;
+        
+        // Проверка капчи
+        if (!calculatorCaptchaToken) {
+            alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+            return;
+        }
 
         const selectedAddons = ADDONS.filter(a => addons[a.key]);
         const data = {
@@ -713,12 +720,14 @@ function Packs({ activePack, setActivePack, openModal }) {
             choices_sum: choicesSum,
             addons_sum: addonsSum,
             promo_amount: promoAmount,
+            captcha_token: calculatorCaptchaToken,
         };
 
         const success = await sendDataToApi(data, 'Calculator');
 
         if (success) {
             setIsSent(true);
+            setCalculatorCaptchaToken(null); // Сброс токена после успешной отправки
         } else {
             // Резервное сообщение об ошибке
             // Замена alert() на console.error() - для продакшн-кода
@@ -969,6 +978,10 @@ function Packs({ activePack, setActivePack, openModal }) {
                   />
                 </div>
               </div>
+              <SmartCaptcha 
+                onSuccess={(token) => setCalculatorCaptchaToken(token)} 
+                onError={(error) => console.error('Captcha error:', error)}
+              />
               <div className="mt-2 grid gap-2">
                 <button
                   type="submit"
@@ -1264,6 +1277,12 @@ export default function UyutLanding() {
   // Состояния для форм в блоках Partners и Company
   const [isPromoFormSent, setIsPromoFormSent] = useState(false);
   const [isAppointmentFormSent, setIsAppointmentFormSent] = useState(false);
+  
+  // Состояния для Yandex SmartCaptcha
+  const [calculatorCaptchaToken, setCalculatorCaptchaToken] = useState(null);
+  const [promoCaptchaToken, setPromoCaptchaToken] = useState(null);
+  const [appointmentCaptchaToken, setAppointmentCaptchaToken] = useState(null);
+  const [ctaCaptchaToken, setCtaCaptchaToken] = useState(null);
 
   // Показывать попап только при попытке ухода (exit intent)
   useEffect(() => {
@@ -1333,16 +1352,24 @@ export default function UyutLanding() {
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
     if (!payload.name || !payload.phone) return;
+    
+    // Проверка капчи
+    if (!promoCaptchaToken) {
+        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        return;
+    }
 
     const data = {
         ...payload,
         lead_type: "Promo Fixation (Grand Line block)",
         promo_percent: PROMO.percent,
         promo_until: PROMO.until,
+        captcha_token: promoCaptchaToken,
     };
     const success = await sendDataToApi(data, 'GrandLine_Form');
     if (success) {
         setIsPromoFormSent(true);
+        setPromoCaptchaToken(null); // Сброс токена после успешной отправки
     } else {
         console.error("Произошла ошибка при отправке заявки на фиксацию скидки.");
     }
@@ -1354,14 +1381,22 @@ export default function UyutLanding() {
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
     if (!payload.name || !payload.phone) return;
+    
+    // Проверка капчи
+    if (!appointmentCaptchaToken) {
+        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        return;
+    }
 
     const data = {
         ...payload,
         lead_type: "Appointment Request (Company Section)",
+        captcha_token: appointmentCaptchaToken,
     };
     const success = await sendDataToApi(data, 'Appointment');
     if (success) {
         setIsAppointmentFormSent(true);
+        setAppointmentCaptchaToken(null); // Сброс токена после успешной отправки
     } else {
         console.error("Произошла ошибка при отправке заявки на консультацию.");
     }
@@ -1555,6 +1590,10 @@ export default function UyutLanding() {
                               placeholder="+7 (XXX) XXX-XX-XX"
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                               inputMode="tel"
+                          />
+                          <SmartCaptcha 
+                            onSuccess={(token) => setPromoCaptchaToken(token)} 
+                            onError={(error) => console.error('Captcha error:', error)}
                           />
                           <button
                               type="submit"
@@ -1805,6 +1844,10 @@ export default function UyutLanding() {
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                           />
                         </div>
+                        <SmartCaptcha 
+                          onSuccess={(token) => setAppointmentCaptchaToken(token)} 
+                          onError={(error) => console.error('Captcha error:', error)}
+                        />
                         <button
                             type="submit"
                             className="w-full px-3 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition shadow-lg" 
@@ -1850,10 +1893,17 @@ export default function UyutLanding() {
                   e.preventDefault();
                   const fd = new FormData(e.currentTarget);
                   const payload = Object.fromEntries(fd.entries());
+                  
+                  // Проверка капчи
+                  if (!ctaCaptchaToken) {
+                      alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+                      return;
+                  }
 
                   const data = {
                     ...payload,
                     lead_type: "Consultation CTA",
+                    captcha_token: ctaCaptchaToken,
                   };
                   
                   const success = await sendDataToApi(data, 'CTA_Block');
@@ -1862,6 +1912,7 @@ export default function UyutLanding() {
                     // Используем SuccessMessage (хотя бы консольный вывод) или делаем редирект на #calc
                     // Для CTA блока, где нет isSent state, пока оставим логику:
                     e.target.reset(); // Очистка формы
+                    setCtaCaptchaToken(null); // Сброс токена
                     const button = e.target.querySelector('button[type="submit"]');
                     if (button) {
                         button.textContent = "✅ Заявка отправлена!";
@@ -1908,6 +1959,10 @@ export default function UyutLanding() {
                     получать новые акции и спецпредложения
                   </label>
                 </div>
+                <SmartCaptcha 
+                  onSuccess={(token) => setCtaCaptchaToken(token)} 
+                  onError={(error) => console.error('Captcha error:', error)}
+                />
                 <button
                   type="submit"
                   className="w-full mt-1 px-4 py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-lg shadow-xl hover:bg-emerald-700 transition"
