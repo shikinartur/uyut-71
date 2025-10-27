@@ -69,6 +69,15 @@ function rub(n) {
   }).format(Number.isFinite(n) ? n : 0);
 }
 
+// Функция проверки, что номер телефона введен полностью по маске +7 (999) 999-99-99
+// Возвращает true, если номер содержит 11 цифр (полностью заполнен)
+function isValidPhone(phone) {
+  if (!phone) return false;
+  // Удаляем все нецифровые символы и проверяем, что осталось 11 цифр
+  const digits = phone.replace(/\D/g, '');
+  return digits.length === 11 && digits[0] === '7';
+}
+
 // Компонент защищенного изображения (только защита от сохранения, без водяных знаков)
 function ProtectedImage({ src, alt, className, style, loading, onClick, ...props }) {
   const handleContextMenu = (e) => {
@@ -698,6 +707,12 @@ function Packs({ activePack, setActivePack, openModal }) {
         const payload = Object.fromEntries(fd.entries());
         
         if (!payload.name || !payload.phone) return;
+        
+        // Проверка, что номер телефона введен полностью
+        if (!isValidPhone(payload.phone)) {
+            alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+            return;
+        }
         
         // Проверка капчи
         if (!calculatorCaptchaToken) {
@@ -1353,6 +1368,12 @@ export default function UyutLanding() {
     const payload = Object.fromEntries(fd.entries());
     if (!payload.name || !payload.phone) return;
     
+    // Проверка, что номер телефона введен полностью
+    if (!isValidPhone(payload.phone)) {
+        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+        return;
+    }
+    
     // Проверка капчи
     if (!promoCaptchaToken) {
         alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
@@ -1381,6 +1402,12 @@ export default function UyutLanding() {
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
     if (!payload.name || !payload.phone) return;
+    
+    // Проверка, что номер телефона введен полностью
+    if (!isValidPhone(payload.phone)) {
+        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+        return;
+    }
     
     // Проверка капчи
     if (!appointmentCaptchaToken) {
@@ -1900,6 +1927,12 @@ export default function UyutLanding() {
                   e.preventDefault();
                   const fd = new FormData(e.currentTarget);
                   const payload = Object.fromEntries(fd.entries());
+                  
+                  // Проверка, что номер телефона введен полностью
+                  if (!isValidPhone(payload.phone)) {
+                      alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+                      return;
+                  }
                   
                   // Проверка капчи
                   if (!ctaCaptchaToken) {
