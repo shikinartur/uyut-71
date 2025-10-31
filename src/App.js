@@ -286,26 +286,14 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
 
         </nav>
         <div className="hidden md:flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <a
-              className="font-semibold flex-shrink-0"
-              href={`tel:${CONTACTS.phoneHref}`}
-              aria-label="Позвонить"
-              itemProp="telephone"
-            >
-              {CONTACTS.phone}
-            </a>
-            <button
-              className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-sm hover:shadow-md whitespace-nowrap"
-              onClick={() => {
-                const el = document.querySelector('#cta form');
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }}
-              aria-label="Заказать обратный звонок"
-            >
-              📞 Перезвоните мне
-            </button>
-          </div>
+          <a
+            className="font-semibold flex-shrink-0"
+            href={`tel:${CONTACTS.phoneHref}`}
+            aria-label="Позвонить"
+            itemProp="telephone"
+          >
+            {CONTACTS.phone}
+          </a>
           {totalWithPromo && (
             <span className={`hidden md:inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-white border border-neutral-200 text-emerald-700 font-extrabold text-sm transition-all duration-300 ${priceAnimated ? 'animate-pulse bg-gradient-to-r from-emerald-50 to-emerald-100 shadow-lg scale-105 border-emerald-300' : ''}`}>
               <span className={`hidden lg:inline font-semibold text-emerald-700 transition-all duration-300 ${priceAnimated ? 'text-emerald-800' : ''}`}>ВСЕГО</span>
@@ -324,18 +312,6 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
             </span>
           )}
         </div>
-        
-        {/* Кнопка обратного звонка на мобиле */}
-        <button
-          className="md:hidden px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white text-xs font-semibold shadow-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300 whitespace-nowrap"
-          onClick={() => {
-            const el = document.querySelector('#cta form');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }}
-          aria-label="Заказать обратный звонок"
-        >
-          Перезвоните
-        </button>
       </div>
       </header> 
 
@@ -654,7 +630,7 @@ function Modal({ images = [], startIndex = 0, onClose }) {
 }
 
 // Order Modal Component
-function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted }) {
+function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) {
   if (!isOpen || !pack) return null;
 
   const handleSubmit = async (e) => {
@@ -694,9 +670,24 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted }) {
           <h3 className="text-xl font-bold text-neutral-900 pr-8">
             {pack.label}
           </h3>
-          <p className="text-sm text-neutral-600 mt-1">
-            Стоимость: {rub(pack.basePrice)}
-          </p>
+          <div className="mt-3 space-y-2">
+            <div className="text-sm text-neutral-600">
+              Обычная цена: <span className="font-semibold">{rub(pack.basePrice)}</span>
+            </div>
+            <div className="bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-emerald-700 font-medium">
+                  🎁 Цена до {PROMO.until}
+                </span>
+                <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-bold text-right">
+                  <div>Скидка {rub(Math.round(pack.basePrice * PROMO.percent))}</div>
+                </div>
+              </div>
+              <div className="text-xl font-extrabold text-emerald-800">
+                {rub(Math.round(pack.basePrice * (1 - PROMO.percent)))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Image */}
@@ -810,11 +801,11 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                                 <div className="bg-emerald-50 border border-emerald-200 px-3 py-3 rounded-lg">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-xs text-emerald-700 font-medium">
-                                            🎁 Цена со скидкой {Math.round(PROMO.percent*100)}%
+                                            🎁 Цена до {PROMO.until}
                                         </span>
-                                        <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">
-                                            скидка {rub(Math.round(p.basePrice * PROMO.percent))}
-                                        </span>
+                                        <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-bold text-right">
+                                            <div>Скидка {rub(Math.round(p.basePrice * PROMO.percent))}</div>
+                                        </div>
                                     </div>
                                     <div className="text-xl font-extrabold text-emerald-800">
                                         {rub(Math.round(p.basePrice * (1 - PROMO.percent)))}
@@ -970,8 +961,8 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
     };
 
   return (
-    <section id="calc" className="mx-auto max-w-7xl px-4 pb-8 relative">
-      <h3 className="text-2xl font-bold mb-6">Узнайте стоимость дома вашей мечты за 3 шага!</h3>
+    <section id="calc" className="mx-auto max-w-7xl px-4 pb-8 lg:pb-8 pb-24 relative">
+      <h3 className="text-2xl font-bold mb-6">Узнайте стоимость Вашего дома за 3 шага!</h3>
   <div className="grid lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-2 space-y-6">
           {/* Этап 1: Выбор комплектации */}
@@ -1191,7 +1182,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     </div>
                     {/* Улучшенное напоминание о времени акции */}
                     <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200 text-center animate-pulse">
-                     ⏰ ЗАФИКСИРУЙ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
+                     ⏰ ЗАФИКСИРУЙ СКИДКУ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
                     </div>
                   </div>
                 </div>
@@ -1292,10 +1283,11 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
       </div>
       {/* Фиксированная панель стоимости для мобильных */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-[9999] md:hidden bg-emerald-600 shadow-lg transition-all duration-300 ${priceAnimated ? 'bg-gradient-to-r from-emerald-500 to-emerald-700 animate-pulse shadow-2xl' : ''}`}
+        className={`fixed bottom-0 left-0 right-0 z-[9999] bg-emerald-600 shadow-lg transition-all duration-300 ${priceAnimated ? 'bg-gradient-to-r from-emerald-500 to-emerald-700 animate-pulse shadow-2xl' : ''}`}
         style={{
           boxShadow: priceAnimated ? "0 -4px 24px 0 rgba(16, 185, 129, 0.4)" : "0 -2px 16px 0 rgba(0,0,0,0.2)",
           pointerEvents: 'auto',
+          display: window.innerWidth >= 1024 ? 'none' : 'block',
         }}
       >
                 
@@ -1304,7 +1296,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
             const el = document.querySelector('#calc form');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }} className="cursor-pointer">
-            <span className={`block text-xs text-emerald-100 font-medium transition-all duration-300 ${priceAnimated ? 'text-emerald-50' : ''}`}>Цена сегодня:</span>
+            <span className={`block text-xs text-emerald-100 font-medium transition-all duration-300 ${priceAnimated ? 'text-emerald-50' : ''}`}>Цена со скидкой</span>
             <span className={`block text-2xl font-extrabold text-white transition-all duration-300 ${priceAnimated ? 'scale-110 text-white' : ''}`}>{totalWithPromoRef.current}</span>
           </div>
           <button
@@ -1421,6 +1413,9 @@ function YandexReviewsWidget() {
   
   // ИСПРАВЛЕНО: Путь к изображению (Используем импорт)
   const qrCodeImagePath = qrCodeReviewUrl; 
+  
+  // Состояние для управления открытым FAQ элементом (только один может быть открыт)
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   // Код виджета, предоставленный пользователем, с изменениями для полной ширины.
   const widgetHtml = `<div style="width: 100%; height: 800px; overflow: hidden; position: relative;">
@@ -1477,25 +1472,42 @@ function YandexReviewsWidget() {
                         ["Какие есть дополнительные расходы?",
                          "Цена доставки и бытовки рассчитывается индивидуально в зависимости от местоположения участка. От вас нужно только электричество и возможность подъехать к участку."],
                     ].map(([q, a], i) => (
-                        <details key={i} className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 hover:bg-white hover:shadow-lg hover:border-emerald-200 transition-all duration-200 group" itemScope itemProp="mainEntity" itemType="http://schema.org/Question">
-                            <summary className="font-semibold cursor-pointer text-neutral-900 text-base flex items-center justify-between gap-3 select-none" itemProp="name">
+                        <div 
+                            key={i} 
+                            className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 hover:bg-white hover:shadow-lg hover:border-emerald-200 transition-all duration-200" 
+                            itemScope 
+                            itemProp="mainEntity" 
+                            itemType="http://schema.org/Question"
+                        >
+                            <div 
+                                className="font-semibold cursor-pointer text-neutral-900 text-base flex items-center justify-between gap-3 select-none" 
+                                itemProp="name"
+                                onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
+                            >
                                 <div className="flex items-start gap-3 flex-1">
                                     <span className="text-emerald-600 text-lg flex-shrink-0">❓</span>
                                     <span className="flex-1">{q}</span>
                                 </div>
                                 <svg 
-                                    className="w-5 h-5 text-emerald-600 transition-transform duration-200 group-open:rotate-180 flex-shrink-0" 
+                                    className={`w-5 h-5 text-emerald-600 transition-transform duration-200 flex-shrink-0 ${openFaqIndex === i ? 'rotate-180' : ''}`}
                                     fill="none" 
                                     stroke="currentColor" 
                                     viewBox="0 0 24 24"
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
-                            </summary>
-                            <div className="text-sm text-neutral-700 mt-4 ml-8 leading-relaxed border-l-2 border-emerald-100 pl-4" itemScope itemProp="acceptedAnswer" itemType="http://schema.org/Answer">
-                                <p itemProp="text">{a}</p>
                             </div>
-                        </details>
+                            {openFaqIndex === i && (
+                                <div 
+                                    className="text-sm text-neutral-700 mt-4 ml-8 leading-relaxed border-l-2 border-emerald-100 pl-4" 
+                                    itemScope 
+                                    itemProp="acceptedAnswer" 
+                                    itemType="http://schema.org/Answer"
+                                >
+                                    <p itemProp="text">{a}</p>
+                                </div>
+                            )}
+                        </div>
                     ))}
                 </div>
                 
@@ -1510,7 +1522,19 @@ function YandexReviewsWidget() {
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H5a2 2 0 01-2-2V5z" />
                             </svg>
-                            Позвонить {CONTACTS.phone}
+                            Позвонить консультанту  
+                        </a>
+                        
+                        <a 
+                            href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                        >
+                            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.155.232.171.326.016.094.036.308.02.475z"/>
+                            </svg>
+                            Написать в TELEGRAM
                         </a>
                         
                         <a 
@@ -1522,7 +1546,7 @@ function YandexReviewsWidget() {
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
                             </svg>
-                            НАПИСАТЬ
+                            WHATSAPP
                         </a>
                     </div>
                 </div>
@@ -1760,8 +1784,8 @@ function UyutLanding() {
     setModalImages([]);
     setModalIndex(0);
   };
-  // Смещение шапки вниз на высоту промо-полосы
-  const promoOffset = PROMO.enabled && daysLeft > 0 ? 32 : 0;
+  // Смещение шапки вниз на высоту промо-полосы (отключено, так как промо-полосы нет)
+  const promoOffset = 0;
   
   // Рассчитываем новую позицию для липких элементов (шапка + промо + небольшой зазор)
   const STICKY_HEADER = 68;
@@ -2060,10 +2084,10 @@ function UyutLanding() {
                     Построем Ваш дом за <span className="text-white">7 </span>недель!
                   </h1>
                   <p className="mt-6 text-xl md:text-2xl text-white/90 leading-relaxed drop-shadow-lg">
-                    По цене от <span className="font-bold text-white bg-black/20 px-2 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}!</span>
+                    По цене от <span className="font-bold text-white bg-black/20 px-2 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}</span>
                   </p>
 
-                     <div className="inline-flex items-center gap-2 bg-red-100 px-3 py-1 rounded-full">
+                     <div className="inline-flex items-center gap-5 bg-red-100 px-3 py-1 rounded-full">
                         <span className="text-sm font-bold text-red-700">🎁 Скидка {Math.round(PROMO.percent*100)}%</span>
                         <span className="text-sm font-bold text-red-700">до {PROMO.until}</span>
                       </div>
@@ -2134,7 +2158,7 @@ function UyutLanding() {
                   </h1>
                   
                   <p className="text-base sm:text-lg text-white/95 leading-relaxed drop-shadow-lg">
-                    По цене от <span className="font-bold text-white bg-black/50 px-3 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}!</span>
+                    По цене от <span className="font-bold text-white bg-black/50 px-3 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}</span>
                   </p>
                   
                   {/* Напоминание о времени акции для мобильных */}
@@ -2226,107 +2250,81 @@ function UyutLanding() {
         <YandexReviewsWidget />
 
         {/* Наши партнеры: Проверенные материалы */}
-        <section id="partners" className="mx-auto max-w-7xl px-4 py-16">
-          {/* Заголовок секции */}
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Строим только из проверенных материалов
-            </h2>
-            
-          </div>
-
+        <section id="partners" className="mx-auto max-w-7xl px-4 py-10">
+          <h2 className="text-2xl font-bold mb-6 text-center">Строим только из проверенных материалов</h2>
+          
           {/* Генеральный партнер Grand Line */}
-          <div className="bg-gradient-to-br from-red-50 via-red-25 to-orange-50 rounded-3xl border border-red-200 overflow-hidden mb-12 shadow-xl">
-            <div className="p-6 sm:p-8 lg:p-12">
-              <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 rounded-2xl shadow-xl overflow-hidden mb-8">
+            <div className="grid lg:grid-cols-2 gap-6 items-center">
+              {/* Изображение */}
+              <div className="w-full h-full">
+                <ProtectedImage 
+                  src={generalPartner1} 
+                  alt="Логотип Grand Line — генеральный партнер и поставщик материалов" 
+                  className="w-full h-full object-cover" 
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Контент с формой */}
+              <div className="p-6 space-y-4">
+                <div className="inline-flex items-center gap-6 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                  <span>🎁 Скидка {Math.round(PROMO.percent*100)}%</span>
+                  <span>Только до {PROMO.until}</span>
+                </div>
                 
-                {/* Логотип и изображение */}
-                <div className="flex justify-center lg:justify-start">
-                  <ProtectedImage 
-                    src={generalPartner1} 
-                    alt="Логотип Grand Line — генеральный партнер и поставщик материалов" 
-                    className="h-[480px] sm:h-[576px] lg:h-[630px] w-auto max-w-full rounded-2xl shadow-lg" 
-                    loading="lazy"
+                <h3 className="text-xl sm:text-2xl font-bold text-red-700">
+                  Grand_Line — генеральный партнер акции
+                </h3>
+                
+                <p className="text-gray-700 text-sm">
+                  Прямые поставки с завода Grand_Line. Вы получаете материалы по ценам производителя с гарантией качества.
+                </p>
+
+                {/* Форма */}
+                {isPromoFormSent ? (
+                  <SuccessMessage
+                    title="✅ Ваша скидка зафиксирована!"
+                    subtitle="Ждите звонка нашего менеджера."
+                    onReset={() => setIsPromoFormSent(false)}
                   />
-                </div>
-
-                {/* Контент */}
-                <div className="text-center lg:text-left space-y-6">
-                  
-                  {/* Заголовок и бейдж */}
-                  <div className="space-y-4">
-                    <div className="inline-flex items-center gap-3 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold">
-                      <span>🎁 Скидка {Math.round(PROMO.percent*100)}%</span>
-                      <span>до {PROMO.until}</span>
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-700">
-                      Grand_Line — генеральный партнер акции
-                    </h3>
-                  </div>
-                  
-                  {/* Описание */}
-                  <p className="text-gray-700 text-lg leading-relaxed">
-                    Прямые поставки с завода Grand_Line.
-                    Вы получаете материалы по ценам производителя с гарантией качества.
-                                      </p>
-
-                  {/* Форма фиксации скидки */}
-                  {isPromoFormSent ? (
-                    <SuccessMessage
-                      title="✅ Ваша скидка зафиксирована!"
-                      subtitle="Ждите звонка нашего менеджера для закрепления цены."
-                      onReset={() => setIsPromoFormSent(false)}
+                ) : (
+                  <form className="space-y-3" onSubmit={handlePromoFormSubmit}>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="Ваше имя"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
-                  ) : (
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 max-w-lg mx-auto lg:mx-0">
-                      <h4 className="text-xl font-bold text-gray-900 text-center mb-5">
-                        Зафиксируйте скидку сейчас!
-                      </h4>
-                      <form 
-                        className="space-y-4"
-                        onSubmit={handlePromoFormSubmit}
-                      >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <input
-                            type="text"
-                            name="name"
-                            required
-                            placeholder="Ваше имя"
-                            className="w-full px-4 py-3 text-base rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
-                          />
-                          <InputMask
-                            mask="+7 (999) 999-99-99"
-                            name="phone"
-                            required
-                            placeholder="+7 (XXX) XXX-XX-XX"
-                            className="w-full px-4 py-3 text-base rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
-                            inputMode="tel"
-                          />
-                        </div>
-                        
-                        <p className="text-xs text-gray-600 text-center">
-                          Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
-                        </p>
-                        
-                        <div className="flex justify-center">
-                          <div className="w-full max-w-xs">
-                            <SmartCaptcha 
-                              onSuccess={(token) => setPromoCaptchaToken(token)} 
-                              onError={(error) => console.error('Captcha error:', error)}
-                            />
-                          </div>
-                        </div>
-                        
-                        <button
-                          type="submit"
-                          className="w-full px-6 py-4 text-lg font-bold rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
-                        >
-                          ХОЧУ СКИДКУ
-                        </button>
-                      </form>
+                    <InputMask
+                      mask="+7 (999) 999-99-99"
+                      name="phone"
+                      required
+                      placeholder="+7 (XXX) XXX-XX-XX"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      inputMode="tel"
+                    />
+                    
+                    <p className="text-xs text-gray-600">
+                      Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+                    </p>
+                    
+                    <div className="flex justify-center">
+                      <SmartCaptcha 
+                        onSuccess={(token) => setPromoCaptchaToken(token)} 
+                        onError={(error) => console.error('Captcha error:', error)}
+                      />
                     </div>
-                  )}
-                </div>
+                    
+                    <button
+                      type="submit"
+                      className="w-full px-4 py-3 font-bold rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg transition-all"
+                    >
+                      ХОЧУ СКИДКУ
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
           </div>
@@ -2478,7 +2476,7 @@ function UyutLanding() {
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Постоянные бригады и независимый технадзор</li>
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Собственное производство в г.Шарья с 2019 года</li>
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Гарантия от 15 лет по договору</li>
-                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Акредитация в СБЕРе, ВТБ, ДомРФ и др.</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Аккредитация в СберБанке, ВТБ, ДомРФ и др.</li>
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Построено более 300 домов</li>
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Собственный проектный отдел с 2012 года</li>
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Партнерские отношения с ведущими производителями</li>
@@ -2634,8 +2632,8 @@ function UyutLanding() {
                 
                 {/* Напоминание о времени акции в CTA */}
                 {PROMO.enabled && daysLeft > 0 && (
-                  <div className="mt-4 mb-4 inline-flex items-center gap-2 rounded-full bg-red-600 text-white px-4 py-2 text-sm font-bold shadow-lg animate-pulse">
-                    ⏰ Скидка {PROMO.percent * 100}% действует ещё {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
+                  <div className="mt-4 mb-4 inline-flex items-center gap-4 rounded-full bg-red-600 text-white px-4 py-2 text-sm font-bold shadow-lg animate-pulse">
+                    ⏰ Скидка {PROMO.percent * 100}% Действует ещё {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
                   </div>
                 )}
                 
@@ -2761,6 +2759,19 @@ function UyutLanding() {
         
         {/* Виджеты мессенджеров для мобильной версии */}
         <div className="fixed right-4 bottom-20 z-40 md:hidden flex flex-col gap-2">
+          {/* Telegram */}
+          <a
+            href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+            aria-label="Написать в Telegram"
+          >
+            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.155.232.171.326.016.094.036.308.02.475z"/>
+            </svg>
+          </a>
+          
           {/* WhatsApp */}
           <a
             href={`https://wa.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС».`}
@@ -2773,18 +2784,6 @@ function UyutLanding() {
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
             </svg>
           </a>
-                    {/* Telegram */}
-          {/*<a
-            href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
-            aria-label="Написать в Telegram"
-          >
-            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
-              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-            </svg>
-          </a>*/}
         </div>
 
         {/* Футер сайта */}
@@ -2812,6 +2811,18 @@ function UyutLanding() {
                 </p>
                 <div className="flex gap-4">
                   <a
+                    href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
+                    aria-label="Telegram"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                  </a>
+                  
+                  <a
                     href={`https://wa.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС».`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -2822,17 +2833,6 @@ function UyutLanding() {
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
                     </svg>
                   </a>
-                  {/*<a
-                    href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
-                    aria-label="Telegram"
-                  >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                  </a>*/}
                 </div>
               </div>
 
@@ -2933,49 +2933,6 @@ function UyutLanding() {
           </div>
         </footer>
 
-        {/* Мобильное фиксированное меню CTA */}
-        <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-white/95 border-t border-neutral-200">
-          <nav aria-label="Мобильное меню CTA">
-            <div className="max-w-7xl mx-auto px-4 py-2">
-              <a
-                href="#calc"
-                className="w-full px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-800 text-white font-bold hover:bg-emerald-700 transition shadow-lg text-sm flex items-center justify-center gap-1" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  // Скролл к заголовку "Краткий расчет"
-                  const headings = document.querySelectorAll('h4');
-                  let targetElement = null;
-                  
-                  for (const heading of headings) {
-                    if (heading.textContent && heading.textContent.includes('Краткий расчет')) {
-                      targetElement = heading;
-                      break;
-                    }
-                  }
-                  
-                  if (targetElement) {
-                    const elementRect = targetElement.getBoundingClientRect();
-                    const absoluteElementTop = elementRect.top + window.pageYOffset;
-                    const targetPosition = absoluteElementTop - 100;
-                    
-                    window.scrollTo({
-                      top: targetPosition,
-                      behavior: 'smooth'
-                    });
-                  } else {
-                    // Фоллбэк - скролл к aside элементу с расчетом
-                    const asideElement = document.querySelector('aside');
-                    if (asideElement) {
-                      asideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }
-                }}
-              >
-                 РАСЧЕТ ЦЕНЫ
-              </a>
-            </div>
-          </nav>
-        </div>
       </div>
       {/* Полноэкранная галерея (десктоп) */}
       {modalImages.length > 0 && (
@@ -2993,6 +2950,7 @@ function UyutLanding() {
         pack={selectedPack}
         onSubmit={() => setOrderFormSent(true)}
         isSubmitted={orderFormSent}
+        daysLeft={daysLeft}
       />
     </>
   );
