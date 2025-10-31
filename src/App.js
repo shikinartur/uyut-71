@@ -2,7 +2,8 @@ import React, { useMemo, useState, useRef, useEffect } from "react";
 import InputMask from "react-input-mask";
 import "./index.css";
 // import { Helmet } from "react-helmet";
-import { sendDataToApi, generateComments } from "./config/bitrix24"; 
+import { sendDataToApi, generateComments } from "./config/bitrix24";
+import { SmartCaptcha } from "./SmartCaptcha"; 
 
 // ====================================================================
 // ==================== ИМПОРТ ИЗОБРАЖЕНИЙ (Относительные пути для Webpack) =============
@@ -67,6 +68,15 @@ function rub(n) {
     currency: "RUB",
     maximumFractionDigits: 0,
   }).format(Number.isFinite(n) ? n : 0);
+}
+
+// Функция проверки, что номер телефона введен полностью по маске +7 (999) 999-99-99
+// Возвращает true, если номер содержит 11 цифр (полностью заполнен)
+function isValidPhone(phone) {
+  if (!phone) return false;
+  // Удаляем все нецифровые символы и проверяем, что осталось 11 цифр
+  const digits = phone.replace(/\D/g, '');
+  return digits.length === 11 && digits[0] === '7';
 }
 
 // Компонент защищенного изображения (только защита от сохранения, без водяных знаков)
@@ -828,8 +838,8 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
 
 // Calculator Section (from App.js with App2.js enhancements)
 // ДОБАВЛЕНА: stickyTop в аргументы для расчета смещения sticky элемента
-  function Calculator({ activePack, setActivePack, totalWithPromoRef, stickyTop = 92, priceAnimated, setPriceAnimated }) {
-    // Fallback to avoid ReferenceError if old HMR chunk still references promoOffset
+  function Calculator({ activePack, setActivePack, totalWithPromoRef, stickyTop = 92, priceAnimated, setPriceAnimated, calculatorCaptchaToken, setCalculatorCaptchaToken }) {
+      // Fallback to avoid ReferenceError if old HMR chunk still references promoOffset
     const pack = PACKS[activePack];
     const [choices, setChoices] = useState(() => {
         const defaults = {};
@@ -905,6 +915,18 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
         const payload = Object.fromEntries(fd.entries());
         
         if (!payload.name || !payload.phone) return;
+        
+        // Проверка, что номер телефона введен полностью
+        if (!isValidPhone(payload.phone)) {
+            alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+            return;
+        }
+        
+        // Проверка капчи
+        if (!calculatorCaptchaToken) {
+            alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+            return;
+        }
 
         const selectedAddons = ADDONS.filter(a => {
             if (a.isTextField) {
@@ -934,12 +956,14 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
             addons_sum: addonsSum,
             promo_amount: promoAmount,
             mortgage_interest: mortgageEnabled,
+            captcha_token: calculatorCaptchaToken,
         };
 
         const success = await sendDataToApi(data, 'Calculator');
 
         if (success) {
             setIsSent(true);
+            setCalculatorCaptchaToken(null); // Сброс токена после успешной отправки
         } else {
             // Резервное сообщение об ошибке
             // Замена alert() на console.error() - для продакшн-кода
@@ -1237,6 +1261,10 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
                 </a>
               </p>
               
+              <SmartCaptcha 
+                onSuccess={(token) => setCalculatorCaptchaToken(token)} 
+                onError={(error) => console.error('Captcha error:', error)}
+              />
               <div className="mt-2 grid gap-2">
                 <button
                   type="submit"
@@ -1575,6 +1603,12 @@ export default function UyutLanding() {
   // Состояния для форм в блоках Partners и Company
   const [isPromoFormSent, setIsPromoFormSent] = useState(false);
   const [isAppointmentFormSent, setIsAppointmentFormSent] = useState(false);
+  
+  // Состояния для Yandex SmartCaptcha
+  const [calculatorCaptchaToken, setCalculatorCaptchaToken] = useState(null);
+  const [promoCaptchaToken, setPromoCaptchaToken] = useState(null);
+  const [appointmentCaptchaToken, setAppointmentCaptchaToken] = useState(null);
+  const [ctaCaptchaToken, setCtaCaptchaToken] = useState(null);
 
   // Функция для получения актуальных цен проектов
   const fetchProjectPrices = async () => {
@@ -1756,16 +1790,30 @@ export default function UyutLanding() {
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
     if (!payload.name || !payload.phone) return;
+    
+    // Проверка, что номер телефона введен полностью
+    if (!isValidPhone(payload.phone)) {
+        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+        return;
+    }
+    
+    // Проверка капчи
+    if (!promoCaptchaToken) {
+        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        return;
+    }
 
     const data = {
         ...payload,
         lead_type: "Promo Fixation (Grand Line block)",
         promo_percent: PROMO.percent,
         promo_until: PROMO.until,
+        captcha_token: promoCaptchaToken,
     };
     const success = await sendDataToApi(data, 'GrandLine_Form');
     if (success) {
         setIsPromoFormSent(true);
+        setPromoCaptchaToken(null); // Сброс токена после успешной отправки
     } else {
         console.error("Произошла ошибка при отправке заявки на фиксацию скидки.");
     }
@@ -1777,14 +1825,28 @@ export default function UyutLanding() {
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
     if (!payload.name || !payload.phone) return;
+    
+    // Проверка, что номер телефона введен полностью
+    if (!isValidPhone(payload.phone)) {
+        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+        return;
+    }
+    
+    // Проверка капчи
+    if (!appointmentCaptchaToken) {
+        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        return;
+    }
 
     const data = {
         ...payload,
         lead_type: "Appointment Request (Company Section)",
+        captcha_token: appointmentCaptchaToken,
     };
     const success = await sendDataToApi(data, 'Appointment');
     if (success) {
         setIsAppointmentFormSent(true);
+        setAppointmentCaptchaToken(null); // Сброс токена после успешной отправки
     } else {
         console.error("Произошла ошибка при отправке заявки на консультацию.");
     }
@@ -2131,10 +2193,18 @@ export default function UyutLanding() {
             }} 
           />
           {/* Передаем stickyTop в Калькулятор */}
-          <Calculator activePack={activePack} setActivePack={setActivePack} totalWithPromoRef={totalWithPromoRef} stickyTop={stickyTop} priceAnimated={priceAnimated} setPriceAnimated={setPriceAnimated} />
-
-          {/* Отзывы и FAQ сразу после калькулятора для снятия возражений */}
-          <YandexReviewsWidget />
+          <Calculator 
+            activePack={activePack} 
+            setActivePack={setActivePack} 
+            totalWithPromoRef={totalWithPromoRef} 
+            stickyTop={stickyTop}
+            priceAnimated={priceAnimated} 
+            setPriceAnimated={setPriceAnimated}
+            calculatorCaptchaToken={calculatorCaptchaToken}
+            setCalculatorCaptchaToken={setCalculatorCaptchaToken}
+          />
+        {/* Отзывы и FAQ сразу после калькулятора для снятия возражений */}
+        <YandexReviewsWidget />
 
         {/* Наши партнеры: Проверенные материалы */}
         <section id="partners" className="mx-auto max-w-7xl px-4 py-12">
@@ -2218,18 +2288,24 @@ export default function UyutLanding() {
                             </a>
                           </p>
                           
+                          />
+                          <SmartCaptcha 
+                            onSuccess={(token) => setPromoCaptchaToken(token)} 
+                            onError={(error) => console.error('Captcha error:', error)}
+                          />
                           <button
                             type="submit"
-                            className="w-full px-6 py-3 mt-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
-                          >
-                            ХОЧУ СКИДКУ
-                          </button>
-                        </form>
+                          <SmartCaptcha 
+                            onSuccess={(token) => setPromoCaptchaToken(token)} 
+                            onError={(error) => console.error('Captcha error:', error)}
+                          />
                       </div>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* Другие проверенные поставщики */}
 
               {/* Другие проверенные поставщики */}
               <div className="mb-6">
@@ -2492,6 +2568,10 @@ export default function UyutLanding() {
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                           />
                         </div>
+                        <SmartCaptcha 
+                          onSuccess={(token) => setAppointmentCaptchaToken(token)} 
+                          onError={(error) => console.error('Captcha error:', error)}
+                        />
                         <button
                             type="submit"
                             className="w-full px-3 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition shadow-lg" 
@@ -2512,7 +2592,9 @@ export default function UyutLanding() {
             {/* Карта Яндекс.Карты */}
           <YandexMapWidget />
 
-                    <section id="cta" className="bg-neutral-900 text-white">
+          </section>
+
+          <section id="cta" className="bg-neutral-900 text-white">
             <div className="mx-auto max-w-7xl px-4 py-12 grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-extrabold text-emerald-400">С чего начать? Три простых шага к своему дому:</h2>
@@ -2537,10 +2619,23 @@ export default function UyutLanding() {
                   e.preventDefault();
                   const fd = new FormData(e.currentTarget);
                   const payload = Object.fromEntries(fd.entries());
+                  
+                  // Проверка, что номер телефона введен полностью
+                  if (!isValidPhone(payload.phone)) {
+                      alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+                      return;
+                  }
+                  
+                  // Проверка капчи
+                  if (!ctaCaptchaToken) {
+                      alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+                      return;
+                  }
 
                   const data = {
                     ...payload,
                     lead_type: "Consultation CTA",
+                    captcha_token: ctaCaptchaToken,
                   };
                   
                   const success = await sendDataToApi(data, 'CTA_Block');
@@ -2549,6 +2644,7 @@ export default function UyutLanding() {
                     // Используем SuccessMessage (хотя бы консольный вывод) или делаем редирект на #calc
                     // Для CTA блока, где нет isSent state, пока оставим логику:
                     e.target.reset(); // Очистка формы
+                    setCtaCaptchaToken(null); // Сброс токена
                     const button = e.target.querySelector('button[type="submit"]');
                     if (button) {
                         button.textContent = "✅ Заявка отправлена!";
@@ -2595,6 +2691,10 @@ export default function UyutLanding() {
                     получать новые акции и спецпредложения
                   </label>
                 </div>
+                <SmartCaptcha 
+                  onSuccess={(token) => setCtaCaptchaToken(token)} 
+                  onError={(error) => console.error('Captcha error:', error)}
+                />
                 <button
                   type="submit"
                   className="w-full mt-1 px-4 py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-lg shadow-xl hover:bg-emerald-700 transition"
@@ -2603,12 +2703,13 @@ export default function UyutLanding() {
                 </button>
                 <p className="text-xs text-neutral-500 text-center">
                   Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
-                </p>
-              </form>
-            </div>
-          </section>
-        </main>
-        
+              </div>
+            </section>
+          </main>
+          
+          {/* Отступ для мобильного футера */}
+          <div className="h-16 md:hidden"></div>
+        </div>
         {/* Отступ для мобильного футера */}
         <div className="h-16 md:hidden"></div>
         
