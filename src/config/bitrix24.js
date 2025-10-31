@@ -115,6 +115,10 @@ export function generateComments(data, source) {
       }
     }
     
+    if (data.custom_wishes) {
+      comments += `\n🔸 ДОПОЛНИТЕЛЬНЫЕ ПОЖЕЛАНИЯ:\n${data.custom_wishes}\n`;
+    }
+    
     if (data.notes) {
       comments += `\nПожелания клиента:\n${data.notes}\n`;
     }
@@ -144,7 +148,7 @@ export function generateComments(data, source) {
     const standardFields = ['name', 'phone', 'email', 'lead_type', 'source', 'timestamp', 
                            'pack_key', 'pack_label', 'total_final', 'config_choices', 'config_addons',
                            'base_price', 'choices_sum', 'addons_sum', 'promo_amount', 'promo_percent', 
-                           'promo_until', 'appointment_date', 'appointment_time', 'notes'];
+                           'promo_until', 'appointment_date', 'appointment_time', 'notes', 'custom_wishes'];
     
     if (!standardFields.includes(key) && value && value.toString().trim() !== '') {
       additionalFields.push(`${key}: ${value}`);
