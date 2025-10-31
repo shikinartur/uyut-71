@@ -2,7 +2,8 @@ import React, { useMemo, useState, useRef, useEffect } from "react";
 import InputMask from "react-input-mask";
 import "./index.css";
 // import { Helmet } from "react-helmet";
-import { sendDataToApi, generateComments } from "./config/bitrix24";// ====================================================================
+import { sendDataToApi, generateComments } from "./config/bitrix24";
+import { SmartCaptcha } from "./SmartCaptcha";// ====================================================================
 // ==================== ИМПОРТ ИЗОБРАЖЕНИЙ (Относительные пути для Webpack) =============
 // ====================================================================
 import logoUrl from "./images/logo-batura.webp";
@@ -1258,6 +1259,11 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
                 </a>
               </p>
               
+              <SmartCaptcha 
+                onSuccess={(token) => setCalculatorCaptchaToken(token)} 
+                onError={(error) => console.error('Captcha error:', error)}
+              />
+              
               <div className="mt-2 grid gap-2">
                 <button
                   type="submit"
@@ -1596,6 +1602,12 @@ export default function UyutLanding() {
   // Состояния для форм в блоках Partners и Company
   const [isPromoFormSent, setIsPromoFormSent] = useState(false);
   const [isAppointmentFormSent, setIsAppointmentFormSent] = useState(false);
+  
+  // Состояния для Yandex SmartCaptcha
+  const [calculatorCaptchaToken, setCalculatorCaptchaToken] = useState(null);
+  const [promoCaptchaToken, setPromoCaptchaToken] = useState(null);
+  const [appointmentCaptchaToken, setAppointmentCaptchaToken] = useState(null);
+  const [ctaCaptchaToken, setCtaCaptchaToken] = useState(null);
   
 
 
@@ -2277,6 +2289,11 @@ export default function UyutLanding() {
                             </a>
                           </p>
                           
+                          <SmartCaptcha 
+                            onSuccess={(token) => setPromoCaptchaToken(token)} 
+                            onError={(error) => console.error('Captcha error:', error)}
+                          />
+                          
                           <button
                             type="submit"
                             className="w-full px-6 py-3 mt-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
@@ -2553,6 +2570,12 @@ export default function UyutLanding() {
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                           />
                         </div>
+                        
+                        <SmartCaptcha 
+                          onSuccess={(token) => setAppointmentCaptchaToken(token)} 
+                          onError={(error) => console.error('Captcha error:', error)}
+                        />
+                        
                         <button
                             type="submit"
                             className="w-full px-3 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition shadow-lg" 
@@ -2670,6 +2693,12 @@ export default function UyutLanding() {
                     получать новые акции и спецпредложения
                   </label>
                 </div>
+                
+                <SmartCaptcha 
+                  onSuccess={(token) => setCtaCaptchaToken(token)} 
+                  onError={(error) => console.error('Captcha error:', error)}
+                />
+                
                 <button
                   type="submit"
                   className="w-full mt-1 px-4 py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-lg shadow-xl hover:bg-emerald-700 transition"
