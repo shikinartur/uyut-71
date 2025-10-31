@@ -2588,8 +2588,6 @@ export default function UyutLanding() {
             {/* Карта Яндекс.Карты */}
           <YandexMapWidget />
 
-          </section>
-
           <section id="cta" className="bg-neutral-900 text-white">
             <div className="mx-auto max-w-7xl px-4 py-12 grid md:grid-cols-2 gap-8 items-center">
               <div>
