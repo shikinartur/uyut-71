@@ -31,13 +31,21 @@ export const SmartCaptcha = ({ onSuccess, onError }) => {
   }
 
   return (
-    <div className="mb-4" style={{ minHeight: '65px' }}>
-      <YandexSmartCaptcha
-        ref={captchaRef}
-        sitekey={CAPTCHA_KEY}
-        onSuccess={handleChallenge}
-        onError={handleError}
-      />
+    <div className="mb-4 w-full max-w-full overflow-hidden" style={{ minHeight: '65px' }}>
+      <div className="flex justify-center items-center w-full">
+        <YandexSmartCaptcha
+          ref={captchaRef}
+          sitekey={CAPTCHA_KEY}
+          onSuccess={handleChallenge}
+          onError={handleError}
+          style={{ 
+            width: '100%', 
+            maxWidth: '300px',
+            transform: 'scale(0.9)',
+            transformOrigin: 'center'
+          }}
+        />
+      </div>
     </div>
   );
 };

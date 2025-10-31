@@ -3,7 +3,9 @@ import InputMask from "react-input-mask";
 import "./index.css";
 // import { Helmet } from "react-helmet";
 import { sendDataToApi, generateComments } from "./config/bitrix24";
-import { SmartCaptcha } from "./SmartCaptcha";// ====================================================================
+import { SmartCaptcha } from "./SmartCaptcha";
+
+// ====================================================================
 // ==================== ИМПОРТ ИЗОБРАЖЕНИЙ (Относительные пути для Webpack) =============
 // ====================================================================
 import logoUrl from "./images/logo-batura.webp";
@@ -34,6 +36,7 @@ import luxe1 from "./images/pack-luxe-1.webp";
 import luxe2 from "./images/pack-luxe-2.webp";
 
 // Hero и Генеральный партнер
+import heroBanner1 from "./images/General/hero-banner-1.webp";
 import generalPartner1 from "./images/General/general-partner-1.webp";
 import generalPartner_vertical from "./images/General/general-partner-vertical.webp";
 import heroBanner2 from "./images/General/hero-banner-2.webp";
@@ -52,9 +55,11 @@ import kaluga1 from "./images/Example/kaluga-1.webp";
 import kaluga2 from "./images/Example/kaluga-2.webp";
 import kaluga3 from "./images/Example/kaluga-3.webp";
 import kaluga4 from "./images/Example/kaluga-4.webp";
+import kaluga5 from "./images/Example/kaluga-5.webp";
 import solnechnogorsk1 from "./images/Example/solnechnogorsk-1.webp";
 import solnechnogorsk2 from "./images/Example/solnechnogorsk-2.webp";
 import solnechnogorsk3 from "./images/Example/solnechnogorsk-3.webp";
+import solnechnogorsk4 from "./images/Example/solnechnogorsk-4.webp";
 
 // ====================================================================
 
@@ -126,7 +131,7 @@ const PHOTOS = {
 };
 // Изображения для главного баннера (Hero)
 const HERO_IMAGES = [
-  generalPartner1,
+  heroBanner1,
   heroBanner2,
   heroBanner3,
   heroBanner4,
@@ -138,16 +143,16 @@ const FLOORPLANS = {
 
 const GALLERY = [
   {
-    location: "Можайск. КП «Изумрудное Озеро»", date: "декабрь 2024", pack: "КВАДРО-БРУС",
+    location: "Можайск. КП «Изумрудное Озеро»", date: "декабрь 2024", pack: "ЭКСТРА (квадро-брус)",
     images: [izumrudozero3, izumrudozero1, izumrudozero2],
   },
   {
-    location: "Калуга. Желыбино", date: "май 2025", pack: "ОПТИМА",
-    images: [kaluga1, kaluga2, kaluga3, kaluga4],
+    location: "Калужская область. Желыбино", date: "март 2025", pack: "ЭКСТРА",
+    images: [kaluga1, kaluga2, kaluga3, kaluga4, kaluga5],
   },
   {
-    location: "Солнечногорск", date: "октябрь 2024", pack: "СТАНДАРТ",
-    images: [solnechnogorsk3, solnechnogorsk2, solnechnogorsk1],
+    location: "Московская область. Солнечногорск", date: "октябрь 2024", pack: "СТАНДАРТ",
+    images: [solnechnogorsk1, solnechnogorsk2, solnechnogorsk3, solnechnogorsk4],
   },
 ];
 
@@ -744,10 +749,7 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted }) {
               </div>
               
               <p className="text-xs text-neutral-500 text-center">
-                Отправляя форму Вы соглашаетесь с{" "}
-                <a href="#" className="text-emerald-600 hover:underline">
-                  Политикой обработки данных
-                </a>
+                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
               </p>
 
               <button
@@ -765,10 +767,15 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted }) {
 }
 
 // Packs Section (from App.js with App2.js enhancements)
-function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
+function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft }) {
     return (
         <section id="packs" className="mx-auto max-w-7xl px-4 py-8">
-            <h3 className="text-2xl font-bold mb-4">Комплектации и цены</h3>
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold mb-4">Комплектации и цены</h3>
+              
+             
+            </div>
+            
             <div className="grid md:grid-cols-3 gap-4">
                 {Object.values(PACKS).map((p) => (
                     <div
@@ -778,16 +785,11 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
                     >
                         <div className="relative">
                             <ImageSlider images={PHOTOS[p.key]} small onOpen={openModal} />
-                            {p.key === "optima" && (
+                            {p.key === "standard" && (
                                 <span className="absolute top-2 left-2 text-[10px] uppercase bg-emerald-600 text-white px-3 py-1 rounded-full font-bold shadow-md">
-                                    ⭐ Хит продаж
+                                    ⭐ ХИТ ПРОДАЖ
                                 </span>
                             )}
-                            <span
-                              className={`absolute top-2 right-2 text-[10px] ${PROMO.ui.badgeBg} ${PROMO.ui.badgeText} px-3 py-1 rounded-full font-bold shadow-md`}
-                              >
-                               {PROMO.shortTag}
-                            </span>
 
                         </div>
                         <div 
@@ -835,9 +837,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
 
 
 // Calculator Section (from App.js with App2.js enhancements)
-// ДОБАВЛЕНА: stickyTop в аргументы для расчета смещения sticky элемента
-  function Calculator({ activePack, setActivePack, totalWithPromoRef, stickyTop = 92, priceAnimated, setPriceAnimated, calculatorCaptchaToken, setCalculatorCaptchaToken }) {
-      // Fallback to avoid ReferenceError if old HMR chunk still references promoOffset
+  function Calculator({ activePack, setActivePack, totalWithPromoRef, priceAnimated, setPriceAnimated, calculatorCaptchaToken, setCalculatorCaptchaToken, daysLeft }) {
     const pack = PACKS[activePack];
     const [choices, setChoices] = useState(() => {
         const defaults = {};
@@ -995,7 +995,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
                 </select>
               </div>
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-neutral-600">Цена</label>
+                <label className="block text-sm font-medium text-neutral-600">Базовая цена</label>
                 <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
                   <span className="text-2xl md:text-3xl font-extrabold text-neutral-900">{rub(basePrice)}</span>
                 </div>
@@ -1105,10 +1105,10 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
             </div>
           </div>
         </div>
-  {/* ИЗМЕНЕНИЕ: ДОБАВЛЕНЫ lg:sticky и self-start, а также style={{ top: stickyTop }} для фиксации на десктопе */}
-  <aside className="space-y-4 lg:sticky lg:self-start" style={{ top: stickyTop }}>
+  {/* Sidebar with calculator summary - NO STICKY */}
+  <aside className="space-y-4">
           <div className="bg-white rounded-2xl border border-neutral-200 p-5">
-            <h4 className="text-lg font-semibold mb-4">Краткий расчет</h4>
+            <h4 className="text-lg font-semibold mb-4">Итоговый краткий расчет</h4>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-neutral-600">Комплектация «{pack.label}»</span>
@@ -1119,7 +1119,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
                 <span className="font-semibold text-neutral-900">{choicesSum >= 0 ? `+${rub(choicesSum)}` : rub(choicesSum)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-neutral-600">Дополнения</span>
+                <span className="text-neutral-600">Дополнительно</span>
                 <span className="font-semibold text-neutral-900">{addonsSum >= 0 ? `+${rub(addonsSum)}` : rub(addonsSum)}</span>
               </div>
               
@@ -1189,9 +1189,9 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
                         </span>
                       )}
                     </div>
-                    {/* Срок скидки */}
-                    <div className="text-xs text-neutral-500 text mb-2">
-                     Только до {PROMO.until}
+                    {/* Улучшенное напоминание о времени акции */}
+                    <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200 text-center animate-pulse">
+                     ⏰ ЗАФИКСИРУЙ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
                     </div>
                   </div>
                 </div>
@@ -1253,16 +1253,17 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
               </div>
               
               <p className="text-xs text-neutral-600 text-center mt-2">
-                Отправляя форму, Вы соглашаетесь с{" "}
-                <a href="#" className="text-emerald-600 hover:underline">
-                  политикой обработки персональных данных
-                </a>
+                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
               </p>
               
-              <SmartCaptcha 
-                onSuccess={(token) => setCalculatorCaptchaToken(token)} 
-                onError={(error) => console.error('Captcha error:', error)}
-              />
+              <div className="flex justify-center w-full max-w-full overflow-hidden">
+                <div className="w-full max-w-xs">
+                  <SmartCaptcha 
+                    onSuccess={(token) => setCalculatorCaptchaToken(token)} 
+                    onError={(error) => console.error('Captcha error:', error)}
+                  />
+                </div>
+              </div>
               
               <div className="mt-2 grid gap-2">
                 <button
@@ -1291,29 +1292,32 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick }) {
       </div>
       {/* Фиксированная панель стоимости для мобильных */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-[9999] md:hidden flex items-center justify-between bg-emerald-600 px-4 py-2 shadow-lg transition-all duration-300 ${priceAnimated ? 'bg-gradient-to-r from-emerald-500 to-emerald-700 animate-pulse shadow-2xl' : ''}`}
+        className={`fixed bottom-0 left-0 right-0 z-[9999] md:hidden bg-emerald-600 shadow-lg transition-all duration-300 ${priceAnimated ? 'bg-gradient-to-r from-emerald-500 to-emerald-700 animate-pulse shadow-2xl' : ''}`}
         style={{
           boxShadow: priceAnimated ? "0 -4px 24px 0 rgba(16, 185, 129, 0.4)" : "0 -2px 16px 0 rgba(0,0,0,0.2)",
           pointerEvents: 'auto',
         }}
       >
-        <div onClick={() => {
-          const el = document.querySelector('#calc form');
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }} className="cursor-pointer">
-          <span className={`block text-xs text-emerald-100 font-medium transition-all duration-300 ${priceAnimated ? 'text-emerald-50' : ''}`}>Цена сегодня:</span>
-          <span className={`block text-2xl font-extrabold text-white transition-all duration-300 ${priceAnimated ? 'scale-110 text-white' : ''}`}>{totalWithPromoRef.current}</span>
-        </div>
-        <button
-          onClick={() => {
+                
+        <div className="flex items-center justify-between px-4 py-2">
+          <div onClick={() => {
             const el = document.querySelector('#calc form');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }}
-          className={`ml-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 text-white font-extrabold text-sm shadow-xl hover:bg-red-700 transition-all duration-300 ${priceAnimated ? 'animate-bounce from-red-600 to-red-800 shadow-2xl' : ''}`}
-          style={{ pointerEvents: 'auto' }}
-        >
-          ЗАФИКСИРОВАТЬ
-        </button>
+          }} className="cursor-pointer">
+            <span className={`block text-xs text-emerald-100 font-medium transition-all duration-300 ${priceAnimated ? 'text-emerald-50' : ''}`}>Цена сегодня:</span>
+            <span className={`block text-2xl font-extrabold text-white transition-all duration-300 ${priceAnimated ? 'scale-110 text-white' : ''}`}>{totalWithPromoRef.current}</span>
+          </div>
+          <button
+            onClick={() => {
+              const el = document.querySelector('#calc form');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }}
+            className={`ml-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 text-white font-extrabold text-sm shadow-xl hover:bg-red-700 transition-all duration-300 ${priceAnimated ? 'animate-bounce from-red-600 to-red-800 shadow-2xl' : ''}`}
+            style={{ pointerEvents: 'auto' }}
+          >
+            ЗАФИКСИРОВАТЬ
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -1453,8 +1457,8 @@ function YandexReviewsWidget() {
                 </div>
             </div>
             
-            {/* Правая колонка: FAQ */}
-            <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-xl space-y-6 sticky top-24 h-fit" itemScope itemType="http://schema.org/FAQPage">
+            {/* Правая колонка: FAQ - NO STICKY */}
+            <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-xl space-y-6" itemScope itemType="http://schema.org/FAQPage">
                 <h3 className="font-extrabold text-xl mb-2 text-center text-neutral-900">Отвечаем на ваши частые вопросы</h3>
                 <p className="text-xs text-neutral-500 text-center mb-4">👆 Нажмите на вопрос, чтобы увидеть ответ</p>
                 
@@ -1464,8 +1468,8 @@ function YandexReviewsWidget() {
                          "Нет - проект уже готов. Вы выбираете комплектацию и отделку, а мы сразу приступаем к производству. Это экономит много времени"],
                         ["Правда, что дом можно построить всего за 7 недель?",
                          "Да, это реально. Уже за 2 недели подготовим домокомплект на производстве, а ещё через 4–5 недель вы сможете пригласить гостей на новоселье. Гарантия срока прописана в договоре."],
-                        ["Какой порядок оплат?",
-                         "Максимально прозрачно: 30% — старт; 30% — после фундамента; 30% — после доставки домокомплекта; 10% — после финальной сдачи дома."],
+                        // ["Какой порядок оплат?",
+                        //  "Максимально прозрачно: 30% — старт; 30% — после фундамента; 30% — после доставки домокомплекта; 10% — после финальной сдачи дома."],
                         ["Цена действительно фиксированная?",
                          "Да, 100%. Никаких скрытых доплат — всё, что в смете, останется неизменным до сдачи дома. Мы берём риски роста цен на себя."],
                         ["Какая гарантия?",
@@ -1498,15 +1502,29 @@ function YandexReviewsWidget() {
                 {/* Призыв к действию в FAQ блоке */}
                 <div className="border-t border-neutral-200 pt-6 text-center">
                     <p className="text-sm text-neutral-600 mb-3">Остались вопросы?</p>
-                    <a 
-                        href={`tel:${CONTACTS.phoneHref}`}
-                        className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H5a2 2 0 01-2-2V5z" />
-                        </svg>
-                        Позвонить {CONTACTS.phone}
-                    </a>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                        <a 
+                            href={`tel:${CONTACTS.phoneHref}`}
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H5a2 2 0 01-2-2V5z" />
+                            </svg>
+                            Позвонить {CONTACTS.phone}
+                        </a>
+                        
+                        <a 
+                            href={`https://wa.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}?text=Здравствуйте! У меня есть вопросы о строительстве дома «Уют-71.ФИКС».`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                        >
+                            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
+                            </svg>
+                            НАПИСАТЬ
+                        </a>
+                    </div>
                 </div>
             </div>
             
@@ -1584,11 +1602,10 @@ function SuccessMessage({ onReset, title, subtitle }) {
 
 
 /* ================= Main App ================= */
-export default function UyutLanding() {
+function UyutLanding() {
   // === State for catalog popup ===
   const [showPromoPopup, setShowPromoPopup] = useState(false);
   const [projectPrices, setProjectPrices] = useState({});
-  const [pricesLoading, setPricesLoading] = useState(false);
   // Calculate days left until promo end date
   const promoEndDate = new Date(PROMO.endDate.year, PROMO.endDate.month - 1, PROMO.endDate.day); // Месяцы с 0, поэтому month - 1
   const today = new Date();
@@ -1611,44 +1628,28 @@ export default function UyutLanding() {
   
 
 
-  // Функция для получения актуальных цен проектов
-  const fetchProjectPrices = async () => {
-    // Проверяем кэш (цены действительны 1 час)
-    const cachedData = localStorage.getItem('batura_project_prices');
-    const cacheTimestamp = localStorage.getItem('batura_prices_timestamp');
-    const oneHour = 60 * 60 * 1000; // 1 час в миллисекундах
-    
-    if (cachedData && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp)) < oneHour) {
-      setProjectPrices(JSON.parse(cachedData));
-      return;
-    }
-
-    setPricesLoading(true);
-    const projectIds = [47, 34, 19, 69, 84, 20];
+  // Функция для инициализации фиксированных цен проектов
+  const initProjectPrices = () => {
+    const projectIds = [47, 34, 76, 69, 84, 20];
     const prices = {};
     
-    // Используем fallback цены, но в будущем можно подключить API
-    for (const id of projectIds) {
+    // Используем фиксированные цены
+    projectIds.forEach(id => {
       prices[id] = getProjectFallbackPrice(id);
-    }
-    
-    // Кэшируем результат
-    localStorage.setItem('batura_project_prices', JSON.stringify(prices));
-    localStorage.setItem('batura_prices_timestamp', Date.now().toString());
+    });
     
     setProjectPrices(prices);
-    setPricesLoading(false);
   };
 
-  // Fallback цены (актуальные на момент создания)
+  // Фиксированные цены проектов
   const getProjectFallbackPrice = (id) => {
     const fallbackPrices = {
-      47: "от 3 942 000 ₽",
-      34: "от 4 584 000 ₽", 
-      19: "от 4 971 000 ₽",
-      69: "от 5 181 000 ₽",
-      84: "цена по запросу",
-      20: "от 6 409 000 ₽"
+      47: "3 650 000 ₽", // проект 47 Уют 71 плюс
+      34: "4 420 000 ₽", // проект 34 Барн 112 
+      76: "3 260 000 ₽", // РУБИН
+      69: "5 780 000 ₽", // МОНТАНА
+      84: "цена по запросу", // ЗЕНИТ-85
+      20: "7 980 000 ₽"  // проект 20 Авиньон - 4
     };
     return fallbackPrices[id] || "цена по запросу";
   };
@@ -1700,12 +1701,10 @@ export default function UyutLanding() {
     function handleExitIntent(e) {
       // Desktop: показываем попап только если мышь ушла за верхнюю границу окна
       if (e.type === 'mouseout' && e.relatedTarget == null && e.clientY <= 0) {
-        fetchProjectPrices(); // Загружаем актуальные цены при показе popup
         setShowPromoPopup(true);
       }
       // Desktop: если окно потеряло focus (blur), показываем только если мышь в верхней части экрана
       if (e.type === 'blur' && window.screenY === 0) {
-        fetchProjectPrices(); // Загружаем актуальные цены при показе popup
         setShowPromoPopup(true);
       }
     }
@@ -1713,7 +1712,6 @@ export default function UyutLanding() {
     function handleBeforeUnload(e) {
       // Mobile: при попытке покинуть страницу (кнопка "Назад", закрытие вкладки)
       if (!showPromoPopup) {
-        fetchProjectPrices(); // Загружаем актуальные цены при показе popup
         setShowPromoPopup(true);
         
         // Предотвращаем немедленный уход со страницы, чтобы показать popup
@@ -1741,7 +1739,7 @@ export default function UyutLanding() {
     };
   }, [showPromoPopup]);
   
-  const [activePack, setActivePack] = useState("standard"); // Делаем "Стандарт" активным по умолчанию
+  const [activePack, setActivePack] = useState("standard"); // Делаем "Оптима" (standard) активным по умолчанию
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // Полноэкранный просмотр: массив изображений и стартовый индекс
   const [modalImages, setModalImages] = useState([]);
@@ -1771,6 +1769,11 @@ export default function UyutLanding() {
 
   // URL для Яндекс Навигатора (только для мобильных устройств)
   // const navigatorUrl = `yandexnavi://build_route_on_map?lat_to=55.698696&lon_to=37.580050&zoom=16&description=${encodeURIComponent(CONTACTS.address)}`;
+
+  // Инициализация фиксированных цен проектов при монтировании компонента
+  useEffect(() => {
+    initProjectPrices();
+  }, []);
 
   // Синхронизация строки цены для хедера
   useEffect(() => {
@@ -1862,6 +1865,7 @@ export default function UyutLanding() {
         isMenuOpen={isMenuOpen} 
         setIsMenuOpen={setIsMenuOpen} 
         daysLeft={daysLeft}
+        promoOffset={promoOffset}
         totalWithPromo={totalWithPromoStr}
         priceAnimated={priceAnimated}
       />
@@ -1873,9 +1877,9 @@ export default function UyutLanding() {
           <div className="bg-white shadow-2xl rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
             
             {/* Заголовок */}
-            <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 rounded-t-2xl">
+            <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 rounded-t-2xl z-50">
               <button
-                className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 text-2xl font-bold"
+                className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 text-2xl font-bold z-10"
                 onClick={() => setShowPromoPopup(false)}
                 aria-label="Закрыть каталог"
                 style={{lineHeight:1}}
@@ -1908,7 +1912,7 @@ export default function UyutLanding() {
             </div>
 
             {/* Сетка проектов */}
-            <div className="p-6">
+            <div className="p-6 relative z-10">
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 {[
                   {
@@ -1926,10 +1930,10 @@ export default function UyutLanding() {
                     features: "1 этаж, 3 комнаты"
                   },
                   {
-                    id: 19,
-                    name: "ВЕСНА 123",
+                    id: 76,
+                    name: "РУБИН",
                     area: "Площадь 123 м²",
-                    image: "https://batura.ru/uploads/projects/2025-06-68429240b026385.png",
+                    image: "https://batura.ru/uploads/projects/2025-09-68dc041c3d75540.png",
                     features: "1 этаж, 3 комнаты"
                   },
                   {
@@ -1959,7 +1963,7 @@ export default function UyutLanding() {
                     href={`https://batura.ru/project/${project.id}/`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white border border-neutral-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                    className="group bg-white border border-neutral-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 hover:scale-[1.02] relative z-0"
                   >
                     <div className="aspect-[4/3] bg-neutral-100 overflow-hidden">
                       <img
@@ -1981,13 +1985,7 @@ export default function UyutLanding() {
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-neutral-600 font-medium">{project.area}</span>
                         <span className="font-bold text-emerald-700">
-                          {pricesLoading ? (
-                            <span className="animate-pulse bg-emerald-200 text-emerald-200 rounded px-1">
-                              обновляем...
-                            </span>
-                          ) : (
-                            projectPrices[project.id] || getProjectFallbackPrice(project.id)
-                          )}
+                          {projectPrices[project.id] || getProjectFallbackPrice(project.id)}
                         </span>
                       </div>
                     </div>
@@ -2032,8 +2030,8 @@ export default function UyutLanding() {
       )}
 
   {/* Fullscreen Hero с фоновым изображением */}
-  <div className="min-h-screen bg-neutral-50" style={{ paddingTop: 68 }}>
-        <main>
+  <div className="min-h-screen bg-neutral-50 w-full max-w-full overflow-x-hidden" style={{ paddingTop: 68 }}>
+        <main className="w-full max-w-full overflow-x-hidden">
           {/* Desktop Hero - Fullscreen with overlay text */}
           <section className="hidden md:block relative min-h-[90vh] flex items-center justify-center overflow-hidden">
             {/* Background Image Slider */}
@@ -2064,7 +2062,12 @@ export default function UyutLanding() {
                   <p className="mt-6 text-xl md:text-2xl text-white/90 leading-relaxed drop-shadow-lg">
                     По цене от <span className="font-bold text-white bg-black/20 px-2 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}!</span>
                   </p>
-                  
+
+                     <div className="inline-flex items-center gap-2 bg-red-100 px-3 py-1 rounded-full">
+                        <span className="text-sm font-bold text-red-700">🎁 Скидка {Math.round(PROMO.percent*100)}%</span>
+                        <span className="text-sm font-bold text-red-700">до {PROMO.until}</span>
+                      </div>
+
                   {/* Features Pills - Compact inline blocks */}
                   <div className="mt-6 space-y-2 text-sm">
                     <div className="inline-block px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium">
@@ -2103,7 +2106,7 @@ export default function UyutLanding() {
           </section>
 
           {/* Mobile Hero - Static image instead of slider */}
-          <section className="md:hidden relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+          <section className="md:hidden relative overflow-hidden w-full min-h-screen">
             {/* Background Static Image */}
             <div className="absolute inset-0 w-full h-full">
               <img 
@@ -2112,45 +2115,60 @@ export default function UyutLanding() {
                 className="w-full h-full object-cover"
                 loading="eager"
               />
-              {/* Overlay for better text readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30"></div>
+              {/* Overlay gradients for text readability */}
+              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/70 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
             </div>
 
             {/* Mobile Hero Content */}
-            <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 flex flex-col justify-between min-h-[90vh]">
-              {/* Top Section - Main Title and Price */}
-              <div className="text-center pt-8">
-                <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100/90 backdrop-blur-sm text-emerald-700 px-4 py-2 text-sm font-semibold shadow-lg">
-                  ⭐ Гарантия 15 лет
-                </span>
-                <h1 className="mt-6 text-3xl lg:text-4xl font-extrabold leading-tight text-white drop-shadow-2xl">
-                  Построем Ваш дом<span className="text-white"> за 7 </span>недель!
-                </h1>
-                <p className="mt-6 text-lg md:text-xl text-white/90 leading-relaxed drop-shadow-lg">
-                  По цене от <span className="font-bold text-white bg-black/20 px-2 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}!</span>
-                </p>
+            <div className="relative z-10 h-full flex flex-col w-full max-w-full">
+              {/* Top Section - Немного опущено */}
+              <div className="px-4 pt-12 pb-6 w-full max-w-full">
+                <div className="text-center space-y-4 w-full max-w-full">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100/95 backdrop-blur-sm text-emerald-700 px-4 py-2 text-sm font-semibold shadow-lg">
+                    ⭐ Гарантия 15 лет
+                  </span>
+                  
+                  <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white drop-shadow-2xl px-2">
+                    Построем Ваш дом<span className="text-white"> за 7 </span>недель!
+                  </h1>
+                  
+                  <p className="text-base sm:text-lg text-white/95 leading-relaxed drop-shadow-lg">
+                    По цене от <span className="font-bold text-white bg-black/50 px-3 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}!</span>
+                  </p>
+                  
+                  {/* Напоминание о времени акции для мобильных */}
+                  {PROMO.enabled && daysLeft > 0 && (
+                    <div className="inline-flex items-center gap-2 rounded-full bg-red-500/95 backdrop-blur-sm text-white px-4 py-2 text-sm font-bold shadow-lg animate-pulse">
+                      СКИДКА еще {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Bottom Section - Features and CTA */}
-              <div className="text-center pb-8">
-                {/* Features Pills - Compact inline blocks */}
-                <div className="space-y-2 text-sm mb-8 flex flex-wrap justify-center gap-2">
-                  <div className="inline-block px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium">
+              {/* Spacer - Большое пустое место для дома */}
+              <div className="flex-1 min-h-[40vh]"></div>
+
+              {/* Bottom Section - Все элементы в самом низу */}
+              <div className="px-4 pb-4 space-y-3 w-full max-w-full">
+                {/* Features Pills */}
+                <div className="flex flex-wrap justify-center gap-2 w-full max-w-full overflow-hidden">
+                  <div className="px-3 py-2 rounded-full bg-white/25 backdrop-blur-sm text-white border border-white/50 font-medium text-sm whitespace-nowrap">
                     Площадь 71 м² • Терраса 15 м²
                   </div>
-                  <div className="inline-block px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium">
+                  <div className="px-3 py-2 rounded-full bg-white/25 backdrop-blur-sm text-white border border-white/50 font-medium text-sm whitespace-nowrap">
                     Две спальни • Кухня-гостиная
                   </div>
                 </div>
                 
                 {/* CTA Button */}
-                <div>
+                <div className="text-center px-2 w-full max-w-full">
                   <button
                     onClick={() => scrollToCTA()}
-                    className="px-8 py-4 rounded-2xl border-2 border-white/60 font-bold text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/80 transition-all duration-300 text-lg flex items-center gap-2 justify-center shadow-xl mx-auto"
+                    className="w-full max-w-xs mx-auto px-4 py-4 rounded-2xl border-2 border-white/90 font-bold text-white bg-white/25 backdrop-blur-sm hover:bg-white/35 hover:border-white transition-all duration-300 text-sm shadow-xl"
                     aria-label="Получить бесплатную консультацию от менеджера"
                   >
-                    <span>Бесплатная консультация</span>
+                    Бесплатная консультация
                   </button>
                 </div>
               </div>
@@ -2187,182 +2205,187 @@ export default function UyutLanding() {
             activePack={activePack} 
             setActivePack={setActivePack} 
             openModal={openModal} 
+            daysLeft={daysLeft}
             onOrderClick={(pack) => {
               setSelectedPack(pack);
               setOrderModalOpen(true);
               setOrderFormSent(false);
             }} 
           />
-          {/* Передаем stickyTop в Калькулятор */}
           <Calculator 
             activePack={activePack} 
             setActivePack={setActivePack} 
-            totalWithPromoRef={totalWithPromoRef} 
-            stickyTop={stickyTop}
+            totalWithPromoRef={totalWithPromoRef}
             priceAnimated={priceAnimated} 
             setPriceAnimated={setPriceAnimated}
             calculatorCaptchaToken={calculatorCaptchaToken}
             setCalculatorCaptchaToken={setCalculatorCaptchaToken}
+            daysLeft={daysLeft}
           />
         {/* Отзывы и FAQ сразу после калькулятора для снятия возражений */}
         <YandexReviewsWidget />
 
         {/* Наши партнеры: Проверенные материалы */}
-        <section id="partners" className="mx-auto max-w-7xl px-4 py-12">
-          <div className="bg-white rounded-3xl border border-neutral-200 shadow-2xl overflow-hidden">
+        <section id="partners" className="mx-auto max-w-7xl px-4 py-16">
+          {/* Заголовок секции */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Строим только из проверенных материалов
+            </h2>
             
-            {/* Заголовок секции */}
-            <div className="bg-gradient-to-r from-neutral-50 to-white px-6 sm:px-8 py-8 text-center border-b border-neutral-100">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-neutral-900 mb-2">
-                Строим только из проверенных материалов
-              </h2>
+          </div>
+
+          {/* Генеральный партнер Grand Line */}
+          <div className="bg-gradient-to-br from-red-50 via-red-25 to-orange-50 rounded-3xl border border-red-200 overflow-hidden mb-12 shadow-xl">
+            <div className="p-6 sm:p-8 lg:p-12">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                
+                {/* Логотип и изображение */}
+                <div className="flex justify-center lg:justify-start">
+                  <ProtectedImage 
+                    src={generalPartner1} 
+                    alt="Логотип Grand Line — генеральный партнер и поставщик материалов" 
+                    className="h-[480px] sm:h-[576px] lg:h-[630px] w-auto max-w-full rounded-2xl shadow-lg" 
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Контент */}
+                <div className="text-center lg:text-left space-y-6">
+                  
+                  {/* Заголовок и бейдж */}
+                  <div className="space-y-4">
+                    <div className="inline-flex items-center gap-3 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+                      <span>🎁 Скидка {Math.round(PROMO.percent*100)}%</span>
+                      <span>до {PROMO.until}</span>
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-700">
+                      Grand_Line — генеральный партнер акции
+                    </h3>
+                  </div>
+                  
+                  {/* Описание */}
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    Прямые поставки с завода Grand_Line.
+                    Вы получаете материалы по ценам производителя с гарантией качества.
+                                      </p>
+
+                  {/* Форма фиксации скидки */}
+                  {isPromoFormSent ? (
+                    <SuccessMessage
+                      title="✅ Ваша скидка зафиксирована!"
+                      subtitle="Ждите звонка нашего менеджера для закрепления цены."
+                      onReset={() => setIsPromoFormSent(false)}
+                    />
+                  ) : (
+                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 max-w-lg mx-auto lg:mx-0">
+                      <h4 className="text-xl font-bold text-gray-900 text-center mb-5">
+                        Зафиксируйте скидку сейчас!
+                      </h4>
+                      <form 
+                        className="space-y-4"
+                        onSubmit={handlePromoFormSubmit}
+                      >
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <input
+                            type="text"
+                            name="name"
+                            required
+                            placeholder="Ваше имя"
+                            className="w-full px-4 py-3 text-base rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                          />
+                          <InputMask
+                            mask="+7 (999) 999-99-99"
+                            name="phone"
+                            required
+                            placeholder="+7 (XXX) XXX-XX-XX"
+                            className="w-full px-4 py-3 text-base rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                            inputMode="tel"
+                          />
+                        </div>
+                        
+                        <p className="text-xs text-gray-600 text-center">
+                          Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+                        </p>
+                        
+                        <div className="flex justify-center">
+                          <div className="w-full max-w-xs">
+                            <SmartCaptcha 
+                              onSuccess={(token) => setPromoCaptchaToken(token)} 
+                              onError={(error) => console.error('Captcha error:', error)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <button
+                          type="submit"
+                          className="w-full px-6 py-4 text-lg font-bold rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                        >
+                          ХОЧУ СКИДКУ
+                        </button>
+                      </form>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="p-6 sm:p-8">
-              {/* Генеральный партнер Grand Line */}
-              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl border border-red-200 p-6 sm:p-8 mb-8">
-                <div className="flex flex-col lg:flex-row items-center gap-8">
-                   {/* Логотип */}
-                  <div className="flex-shrink-0">
-                    <ProtectedImage 
-                      src={generalPartner1} 
-                      alt="Логотип Grand Line — генеральный партнер и поставщик материалов" 
-                      className="h-48 sm:h-60 lg:h-72 w-auto" 
+          </div>
+
+          {/* Другие поставщики */}
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
+            <div className="p-6 sm:p-8 lg:p-12">
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-10">
+                Наши поставщики
+              </h3>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                
+                {/* Окна REHAU */}
+                <div className="group text-center p-6 rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">
+                  <div className="bg-gray-50 rounded-xl p-4 inline-flex items-center justify-center mb-6 group-hover:bg-white transition-colors">
+                    <img 
+                      src={rehauLogoUrl} 
+                      alt="Логотип Rehau — профили для окон" 
+                      className="h-16 w-auto" 
                       loading="lazy"
                     />
                   </div>
-
-                  {/* Контент */}
-                  <div className="flex-1 text-center lg:text-left">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-                      <h3 className="text-xl sm:text-2xl font-bold text-red-700">
-                        Генеральный партнер
-                      </h3>
-                      <div className="inline-flex items-center gap-2 bg-red-100 px-3 py-1 rounded-full">
-                        <span className="text-sm font-bold text-red-700">🎁 Скидка {Math.round(PROMO.percent*100)}%</span>
-                        <span className="text-sm font-bold text-red-700">до {PROMO.until}</span>
-                      </div>
-                    </div>
-                    
-                    <p className="text-neutral-700 mb-6 leading-relaxed">
-                      Прямые поставки с завода Grand_Line по партнерским ценам. 
-                      Гарантируем оригинальное качество и передаем вам все скидки от производителя.
-                    </p>
-
-                    {/* Форма фиксации скидки */}
-                    {isPromoFormSent ? (
-                      <SuccessMessage
-                        title="✅ Ваша скидка зафиксирована!"
-                        subtitle="Ждите звонка нашего менеджера для закрепления цены."
-                        onReset={() => setIsPromoFormSent(false)}
-                      />
-                    ) : (
-                      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-inner border border-emerald-200">
-                        <h4 className="text-lg font-bold text-neutral-800 text-center mb-4">
-                          Зафиксируйте скидку сейчас!
-                        </h4>
-                        <form 
-                          className="space-y-3"
-                          onSubmit={handlePromoFormSubmit}
-                        >
-                          <div className="grid sm:grid-cols-2 gap-3">
-                            <input
-                              type="text"
-                              name="name"
-                              required
-                              placeholder="Ваше имя"
-                              className="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                            />
-                            <InputMask
-                              mask="+7 (999) 999-99-99"
-                              name="phone"
-                              required
-                              placeholder="+7 (XXX) XXX-XX-XX"
-                              className="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                              inputMode="tel"
-                            />
-                          </div>
-                          
-                          <p className="text-xs text-neutral-600 text-center mt-3">
-                            Отправляя форму, Вы соглашаетесь с{" "}
-                            <a href="#" className="text-red-600 hover:underline">
-                              политикой обработки персональных данных
-                            </a>
-                          </p>
-                          
-                          <SmartCaptcha 
-                            onSuccess={(token) => setPromoCaptchaToken(token)} 
-                            onError={(error) => console.error('Captcha error:', error)}
-                          />
-                          
-                          <button
-                            type="submit"
-                            className="w-full px-6 py-3 mt-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
-                          >
-                            ХОЧУ СКИДКУ
-                          </button>
-                        </form>
-                      </div>
-                    )}
-                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-3">Окна REHAU</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    Немецкий профиль премиум-класса. Энергоэффективность и долговечность без регулировки годами.
+                  </p>
                 </div>
-              </div>
-
-              {/* Другие проверенные поставщики */}
-
-              {/* Другие проверенные поставщики */}
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-neutral-900 text-center mb-6">
-                  Наши поставщики
-                </h3>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  
-                  {/* Окна REHAU */}
-                  <div className="group bg-neutral-50 hover:bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 p-6 text-center transition-all duration-200 hover:shadow-lg">
-                    <div className="bg-white rounded-lg p-3 inline-flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
-                      <img 
-                        src={rehauLogoUrl} 
-                        alt="Логотип Rehau — профили для окон" 
-                        className="h-12 w-auto" 
-                        loading="lazy"
-                      />
-                    </div>
-                    <h4 className="text-lg font-bold text-neutral-800 mb-2">Окна REHAU</h4>
-                    <p className="text-sm text-neutral-600 leading-relaxed">
-                      Немецкий профиль премиум-класса. Энергоэффективность и долговечность без регулировки годами.
-                    </p>
+                
+                {/* Утеплитель KNAUF */}
+                <div className="group text-center p-6 rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">
+                  <div className="bg-gray-50 rounded-xl p-4 inline-flex items-center justify-center mb-6 group-hover:bg-white transition-colors">
+                    <img 
+                      src={knaufLogoUrl} 
+                      alt="Логотип Knauf — теплоизоляция" 
+                      className="h-16 w-auto" 
+                      loading="lazy"
+                    />
                   </div>
-                  
-                  {/* Утеплитель KNAUF */}
-                  <div className="group bg-neutral-50 hover:bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 p-6 text-center transition-all duration-200 hover:shadow-lg">
-                    <div className="bg-white rounded-lg p-3 inline-flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
-                      <img 
-                        src={knaufLogoUrl} 
-                        alt="Логотип Knauf — теплоизоляция" 
-                        className="h-12 w-auto" 
-                        loading="lazy"
-                      />
-                    </div>
-                    <h4 className="text-lg font-bold text-neutral-800 mb-2">Утеплитель KNAUF</h4>
-                    <p className="text-sm text-neutral-600 leading-relaxed">
-                      Экологически чистая теплоизоляция. Негорючая и безопасная для жилых домов.
-                    </p>
+                  <h4 className="text-xl font-bold text-gray-900 mb-3">Утеплитель KNAUF</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    Экологически чистая теплоизоляция. Негорючая и безопасная для жилых домов.
+                  </p>
+                </div>
+                
+                {/* Изоляция ТЕХНОНИКОЛЬ */}
+                <div className="group text-center p-6 rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">
+                  <div className="bg-gray-50 rounded-xl p-4 inline-flex items-center justify-center mb-6 group-hover:bg-white transition-colors">
+                    <img 
+                      src={technonicolLogoUrl} 
+                      alt="Логотип Технониколь — изоляционные материалы" 
+                      className="h-16 w-auto" 
+                      loading="lazy"
+                    />
                   </div>
-                  
-                  {/* Изоляция ТЕХНОНИКОЛЬ */}
-                  <div className="group bg-neutral-50 hover:bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 p-6 text-center transition-all duration-200 hover:shadow-lg sm:col-span-2 lg:col-span-1">
-                    <div className="bg-white rounded-lg p-3 inline-flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
-                      <img 
-                        src={technonicolLogoUrl} 
-                        alt="Логотип Технониколь — изоляционные материалы" 
-                        className="h-12 w-auto" 
-                        loading="lazy"
-                      />
-                    </div>
-                    <h4 className="text-lg font-bold text-neutral-800 mb-2">Изоляция ТЕХНОНИКОЛЬ</h4>
-                    <p className="text-sm text-neutral-600 leading-relaxed">
-                      Базальтовый утеплитель и защитные пленки. Максимальная защита от влаги и конденсата.
-                    </p>
-                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-3">Изоляция ТЕХНОНИКОЛЬ</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    Базальтовый утеплитель и защитные пленки. Максимальная защита от влаги и конденсата.
+                  </p>
                 </div>
               </div>
             </div>
@@ -2447,15 +2470,19 @@ export default function UyutLanding() {
               
               {/* Левая колонка: О компании и Фото */}
               <div itemScope itemType="http://schema.org/AboutPage" className="space-y-6">
-                <h2 className="text-3xl font-extrabold mb-2 text-neutral-900">О компании «БАТУРА»</h2>
+                <h2 className="text-3xl font-extrabold mb-2 text-neutral-900">О строительной компании «БАТУРА»</h2>
                 <p className="text-lg text-emerald-700 font-semibold mb-4">
                   С 2016 года строим надежные каркасные дома — честно, в срок, по фиксированной цене.
                 </p>
                 <ul className="mt-3 text-base text-neutral-700 space-y-2">
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Постоянные бригады и независимый технадзор</li>
-                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Собственное производство в г.Шарья</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Собственное производство в г.Шарья с 2019 года</li>
                   <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Гарантия от 15 лет по договору</li>
-                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Построено более 350 домов</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Акредитация в СБЕРе, ВТБ, ДомРФ и др.</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Построено более 300 домов</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Собственный проектный отдел с 2012 года</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Партнерские отношения с ведущими производителями</li>
+                  <li className="flex items-start gap-2"><span className="text-xl text-emerald-600">✓</span> Новый офис продаж в Москве с 2023 года</li>
                                   </ul>
                 {/* Фотография шоурума */}
                 <div className="w-full overflow-hidden rounded-2xl shadow-xl">
@@ -2468,7 +2495,7 @@ export default function UyutLanding() {
                 </div>
               </div>
                           <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-xl space-y-6 sticky top-24 h-fit" itemScope itemType="http://schema.org/LocalBusiness">
-                <h3 className="font-extrabold text-xl mb-3 text-center text-neutral-900">Приезжайте в наш Офис</h3>
+                <h3 className="font-extrabold text-xl mb-3 text-center text-neutral-900">Пользуйтесь бесплатной офисной парковкой</h3>
                 <meta itemProp="name" content="Батура. Строительство каркасных домов" />
                 
                 <div className="flex flex-col gap-4">
@@ -2481,7 +2508,7 @@ export default function UyutLanding() {
                             loading="lazy"
                           />
                       </div>
-                      <p className="text-xs text-neutral-500 mt-2">Маршрут к бесплатной офисной парковке</p>
+                      <p className="text-xs text-neutral-500 mt-2">ПРОЛОЖИТЬ МАРШРУТ</p>
                     </div>
                     
                     {/* Детали контактов (выравнивание по правому краю) */}
@@ -2571,10 +2598,14 @@ export default function UyutLanding() {
                           />
                         </div>
                         
-                        <SmartCaptcha 
-                          onSuccess={(token) => setAppointmentCaptchaToken(token)} 
-                          onError={(error) => console.error('Captcha error:', error)}
-                        />
+                        <div className="flex justify-center w-full max-w-full overflow-hidden">
+                          <div className="w-full max-w-xs">
+                            <SmartCaptcha 
+                              onSuccess={(token) => setAppointmentCaptchaToken(token)} 
+                              onError={(error) => console.error('Captcha error:', error)}
+                            />
+                          </div>
+                        </div>
                         
                         <button
                             type="submit"
@@ -2600,6 +2631,14 @@ export default function UyutLanding() {
             <div className="mx-auto max-w-7xl px-4 py-12 grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-extrabold text-emerald-400">С чего начать? Три простых шага к своему дому:</h2>
+                
+                {/* Напоминание о времени акции в CTA */}
+                {PROMO.enabled && daysLeft > 0 && (
+                  <div className="mt-4 mb-4 inline-flex items-center gap-2 rounded-full bg-red-600 text-white px-4 py-2 text-sm font-bold shadow-lg animate-pulse">
+                    ⏰ Скидка {PROMO.percent * 100}% действует ещё {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
+                  </div>
+                )}
+                
                 <p className="mt-2 text-neutral-300 font-semibold">
                   Отправьте свои пожелания — перезвоним, подберем комплектацию и зафиксируем цену.
                 </p>
@@ -2694,10 +2733,14 @@ export default function UyutLanding() {
                   </label>
                 </div>
                 
-                <SmartCaptcha 
-                  onSuccess={(token) => setCtaCaptchaToken(token)} 
-                  onError={(error) => console.error('Captcha error:', error)}
-                />
+                <div className="flex justify-center w-full max-w-full overflow-hidden">
+                  <div className="w-full max-w-xs">
+                    <SmartCaptcha 
+                      onSuccess={(token) => setCtaCaptchaToken(token)} 
+                      onError={(error) => console.error('Captcha error:', error)}
+                    />
+                  </div>
+                </div>
                 
                 <button
                   type="submit"
@@ -2954,3 +2997,5 @@ export default function UyutLanding() {
     </>
   );
 }
+
+export default UyutLanding;

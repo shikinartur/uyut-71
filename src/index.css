@@ -18,11 +18,21 @@ body {
   html, body {
     /* Предотвращаем bounce эффект на iOS */
     overscroll-behavior: none;
+    /* Предотвращаем горизонтальный скроллинг */
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
   }
   
   /* Фиксация проблем с position: fixed на iOS */
   .fixed-element-mobile-fix {
     position: absolute;
+  }
+  
+  /* Принудительно ограничиваем все элементы по ширине */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
