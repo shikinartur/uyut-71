@@ -2288,17 +2288,13 @@ export default function UyutLanding() {
                             </a>
                           </p>
                           
-                          />
-                          <SmartCaptcha 
-                            onSuccess={(token) => setPromoCaptchaToken(token)} 
-                            onError={(error) => console.error('Captcha error:', error)}
-                          />
                           <button
                             type="submit"
-                          <SmartCaptcha 
-                            onSuccess={(token) => setPromoCaptchaToken(token)} 
-                            onError={(error) => console.error('Captcha error:', error)}
-                          />
+                            className="w-full px-6 py-3 mt-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                          >
+                            ХОЧУ СКИДКУ
+                          </button>
+                        </form>
                       </div>
                     )}
                   </div>
