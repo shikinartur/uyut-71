@@ -4,7 +4,8 @@ const PROMO = {
   percent: 0.15,                            // размер скидки (например, 0.07 для 7%)
   until: "7 ноября",                      // срок действия акции (текст)
   endDate: { year: 2025, month: 11, day: 7 }, // дата завершения акции (месяц: 1-12)
-  exitPopupEnabled: false,                   // срок вкл/выкл Popup true/false
+  exitPopupEnabled: true,                   // вкл/выкл Popup для desktop true/false
+  exitPopupMobileEnabled: true,            // вкл/выкл Popup для mobile true/false
   ui: {
     badgeBg: "bg-red-100",
     badgeText: "text-red-700",
@@ -17,6 +18,6 @@ const PROMO = {
 };
 PROMO.label = `Скидка ${Math.round(PROMO.percent*100)}%`;
 PROMO.shortTag = `Скидка до ${PROMO.until}`;
-PROMO.bannerText = `Успейте зафиксировать цену — скидка до ${PROMO.until}!`;
+PROMO.bannerText = `По цене от ${PROMO.until}!`;
 
 export { PROMO }; 
