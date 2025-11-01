@@ -83,7 +83,7 @@ function isValidPhone(phone) {
 }
 
 // Компонент защищенного изображения (только защита от сохранения, без водяных знаков)
-function ProtectedImage({ src, alt, className, style, loading, onClick, showWatermark = true, watermarkType = "default", ...props }) {
+function ProtectedImage({ src, alt, className, style, loading, onClick, showWatermark = true, watermarkType = "default", isHeroMode = false, ...props }) {
   const handleContextMenu = (e) => {
     e.preventDefault(); // Блокируем правый клик
   };
@@ -94,9 +94,11 @@ function ProtectedImage({ src, alt, className, style, loading, onClick, showWate
 
   const renderWatermark = () => {
     // Единый водяной знак для всех типов: более прозрачный и одинакового размера
+    // В hero режиме убираем transition чтобы избежать сдваивания при смене слайдов
+    const transitionClass = isHeroMode ? "" : "transition-all duration-300";
     return (
       <div className="absolute bottom-8 right-8 pointer-events-none z-10">
-        <div className="bg-white/4 backdrop-blur-sm rounded-2xl border border-white/10 p-4 shadow-xl flex items-center justify-center transition-all duration-300" style={{ width: '120px', height: '120px' }}>
+        <div className={`bg-white/4 backdrop-blur-sm rounded-2xl border border-white/10 p-4 shadow-xl flex items-center justify-center ${transitionClass}`} style={{ width: '120px', height: '120px' }}>
           <img 
             src={logoUrl} 
             alt="Логотип Батура" 
@@ -516,6 +518,7 @@ function ImageSlider({ images = [], small = false, onOpen, auto = false, interva
             loading={auto && i === 0 ? "eager" : "lazy"} 
             className={`absolute inset-0 w-full h-full ${heroMode ? "object-cover object-center" : "object-cover"} transition-opacity duration-500 ${i === index ? "opacity-100" : "opacity-0"}`}
             showWatermark={heroMode ? (i === index) : false}
+            isHeroMode={heroMode}
             onLoad={(e) => {
               if (i === 0) e.target.closest('.relative').style.backgroundImage = 'none';
             }}
