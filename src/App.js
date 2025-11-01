@@ -83,7 +83,7 @@ function isValidPhone(phone) {
 }
 
 // Компонент защищенного изображения (только защита от сохранения, без водяных знаков)
-function ProtectedImage({ src, alt, className, style, loading, onClick, ...props }) {
+function ProtectedImage({ src, alt, className, style, loading, onClick, showWatermark = true, watermarkType = "default", ...props }) {
   const handleContextMenu = (e) => {
     e.preventDefault(); // Блокируем правый клик
   };
@@ -92,19 +92,57 @@ function ProtectedImage({ src, alt, className, style, loading, onClick, ...props
     e.preventDefault(); // Блокируем перетаскивание
   };
 
+  const renderWatermark = () => {
+    // Единый водяной знак для всех типов: более прозрачный и одинакового размера
+    return (
+      <div className="absolute bottom-8 right-8 pointer-events-none z-10">
+        <div className="bg-white/4 backdrop-blur-sm rounded-2xl border border-white/10 p-4 shadow-xl flex items-center justify-center transition-all duration-300" style={{ width: '120px', height: '120px' }}>
+          <img 
+            src={logoUrl} 
+            alt="Логотип Батура" 
+            className="opacity-30 drop-shadow-md max-w-full max-h-full object-contain"
+            style={{ width: '84px', height: '84px' }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  // Если водяной знак отключен, возвращаем просто img как раньше
+  if (!showWatermark) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        style={{ ...style, userSelect: 'none' }}
+        loading={loading}
+        onClick={onClick}
+        onContextMenu={handleContextMenu}
+        onDragStart={handleDragStart}
+        draggable={false}
+        {...props}
+      />
+    );
+  }
+
+  // Если водяной знак включен, возвращаем div с водяным знаком
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      style={{ ...style, userSelect: 'none' }}
-      loading={loading}
-      onClick={onClick}
-      onContextMenu={handleContextMenu}
-      onDragStart={handleDragStart}
-      draggable={false}
-      {...props}
-    />
+    <div className={className} style={style}>
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover"
+        style={{ userSelect: 'none' }}
+        loading={loading}
+        onClick={onClick}
+        onContextMenu={handleContextMenu}
+        onDragStart={handleDragStart}
+        draggable={false}
+        {...props}
+      />
+      {renderWatermark()}
+    </div>
   );
 }
 
@@ -423,7 +461,7 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
 }
 
 // ImageSlider Component (from App2.js)
-function ImageSlider({ images = [], small = false, onOpen, auto = false, interval = 5000, heroMode = false }) {
+function ImageSlider({ images = [], small = false, onOpen, auto = false, interval = 5000, heroMode = false, watermarkType = "default" }) {
   const [index, setIndex] = useState(0);
   const timerRef = useRef(null);
   const touchStartX = useRef(null);
@@ -477,6 +515,7 @@ function ImageSlider({ images = [], small = false, onOpen, auto = false, interva
             // Замена на loading="eager" для первого изображения Hero для FCP (First Contentful Paint)
             loading={auto && i === 0 ? "eager" : "lazy"} 
             className={`absolute inset-0 w-full h-full ${heroMode ? "object-cover object-center" : "object-cover"} transition-opacity duration-500 ${i === index ? "opacity-100" : "opacity-0"}`}
+            showWatermark={heroMode ? (i === index) : false}
             onLoad={(e) => {
               if (i === 0) e.target.closest('.relative').style.backgroundImage = 'none';
             }}
@@ -488,7 +527,7 @@ function ImageSlider({ images = [], small = false, onOpen, auto = false, interva
           type="button"
           className="hidden md:block absolute inset-0 z-[5] cursor-zoom-in"
           aria-label="Открыть фото в полноэкранном режиме"
-          onClick={() => onOpen({ images, index })}
+          onClick={() => onOpen({ images, index, watermarkType })}
         />
       )}
       {images.length > 1 && (
@@ -538,7 +577,7 @@ function ImageSlider({ images = [], small = false, onOpen, auto = false, interva
 }
 
 // Modal Component (for Hero image/Gallery)
-function Modal({ images = [], startIndex = 0, onClose }) {
+function Modal({ images = [], startIndex = 0, onClose, watermarkType = "default" }) {
   const [index, setIndex] = useState(startIndex);
   const touchStartX = useRef(null);
 
@@ -588,13 +627,17 @@ function Modal({ images = [], startIndex = 0, onClose }) {
       role="dialog"
       aria-modal="true"
     >
-      <ProtectedImage
-        src={images[index]}
-        alt={`Просмотр фото ${index + 1} из ${images.length}`}
-        className="max-h-[95%] max-w-[95%] object-contain rounded-lg"
-        onClick={(e) => e.stopPropagation()}
-        loading="eager"
-      />
+      <div className="relative max-h-[95%] max-w-[95%] flex items-center justify-center">
+        <ProtectedImage
+          src={images[index]}
+          alt={`Просмотр фото ${index + 1} из ${images.length}`}
+          className="max-h-full max-w-full object-contain rounded-lg"
+          onClick={(e) => e.stopPropagation()}
+          loading="eager"
+          showWatermark={true}
+          watermarkType={watermarkType}
+        />
+      </div>
       <button
         onClick={onClose}
         className="absolute top-4 right-4 text-white text-3xl font-bold opacity-70 hover:opacity-100 transition"
@@ -775,7 +818,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                         className="text-left rounded-2xl border border-neutral-200 transition hover:shadow-xl hover:scale-[1.01] duration-200"
                     >
                         <div className="relative">
-                            <ImageSlider images={PHOTOS[p.key]} small onOpen={openModal} />
+                            <ImageSlider images={PHOTOS[p.key]} small onOpen={openModal} watermarkType="pack" />
                             {p.key === "standard" && (
                                 <span className="absolute top-2 left-2 text-[10px] uppercase bg-emerald-600 text-white px-3 py-1 rounded-full font-bold shadow-md">
                                     ⭐ ХИТ ПРОДАЖ
@@ -1383,6 +1426,7 @@ function FloorPlans({ openModal }) {
                         alt="Планировка дома «Уют-71.ФИКС» без мебели"
                         className="w-full max-h-[420px] object-contain rounded-xl"
                         loading="lazy"
+                        showWatermark={false}
                     />
                 </div>
                 <div
@@ -1398,6 +1442,7 @@ function FloorPlans({ openModal }) {
                         alt="Планировка дома «Уют-71.ФИКС» с мебелью"
                         className="w-full max-h-[420px] object-contain rounded-xl"
                         loading="lazy"
+                        showWatermark={false}
                     />
                 </div>
             </div>
@@ -1825,21 +1870,24 @@ function UyutLanding() {
   // Полноэкранный просмотр: массив изображений и стартовый индекс
   const [modalImages, setModalImages] = useState([]);
   const [modalIndex, setModalIndex] = useState(0);
+  const [modalWatermarkType, setModalWatermarkType] = useState("default");
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [selectedPack, setSelectedPack] = useState(null);
   const [orderFormSent, setOrderFormSent] = useState(false);
   
-  const openModal = ({ images, index = 0 }) => {
+  const openModal = ({ images, index = 0, watermarkType = "default" }) => {
     const isDesktop = window.matchMedia && window.matchMedia('(min-width: 768px)').matches;
     // Оставляем модальное окно только для десктопа согласно пожеланию, 
     // но рекомендуем адаптировать его для мобильных в будущем.
     if (!isDesktop) return; 
     setModalImages(images || []);
     setModalIndex(index);
+    setModalWatermarkType(watermarkType);
   };
   const closeModal = () => {
     setModalImages([]);
     setModalIndex(0);
+    setModalWatermarkType("default");
   };
   // Смещение шапки вниз на высоту промо-полосы (отключено, так как промо-полосы нет)
   const promoOffset = 0;
@@ -2157,6 +2205,7 @@ function UyutLanding() {
                 auto
                 interval={6000}
                 heroMode={true}
+                watermarkType="gallery"
               />
               {/* Overlay for better text readability */}
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30"></div>
@@ -2592,6 +2641,7 @@ function UyutLanding() {
                     alt="Уютный, современный шоурум компании «Батура» в Москве" 
                     className="w-full h-auto object-cover border border-neutral-200" 
                     loading="lazy" 
+                    showWatermark={false}
                   />
                 </div>
               </div>
@@ -2700,15 +2750,15 @@ function UyutLanding() {
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                               inputMode="tel"
                           />
-                        <div className="grid grid-cols-2 gap-3">
-                          <input
-                              type="date"
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <InputMask
+                              mask="99.99.9999"
                               name="appointment_date"
-                              placeholder="Дата"
+                              placeholder="Желаемая дата"
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
                           />
-                          <input
-                              type="time"
+                          <InputMask
+                              mask="99:99"
                               name="appointment_time"
                               placeholder="Время"
                               className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-900"
@@ -3030,7 +3080,7 @@ function UyutLanding() {
       </div>
       {/* Полноэкранная галерея (десктоп) */}
       {modalImages.length > 0 && (
-        <Modal images={modalImages} startIndex={modalIndex} onClose={closeModal} />
+        <Modal images={modalImages} startIndex={modalIndex} onClose={closeModal} watermarkType={modalWatermarkType} />
       )}
       
       {/* Модальное окно заказа дома */}
