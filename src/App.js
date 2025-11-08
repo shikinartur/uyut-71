@@ -2486,7 +2486,7 @@ function UyutLanding() {
                     ⭐ Гарантия 15 лет
                   </span>
                   <h1 className="mt-6 text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-2xl">
-                    Построем Ваш дом за <span className="text-white">7 </span>недель!
+                    Построим Ваш дом за <span className="text-white">7 </span>недель!
                   </h1>
                   <p className="mt-6 text-xl md:text-2xl text-white/90 leading-relaxed drop-shadow-lg">
                     По цене от <span className="font-bold text-white bg-black/20 px-2 py-1 rounded-lg backdrop-blur-sm">{rub(Math.round(PACKS.luxe.basePrice * (1 - PROMO.percent)))}</span>
@@ -2559,7 +2559,7 @@ function UyutLanding() {
                   </span>
                   
                   <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white drop-shadow-2xl px-2">
-                    Построем Ваш дом<span className="text-white"> за 7 </span>недель!
+                    Построим Ваш дом<span className="text-white"> за 7 </span>недель!
                   </h1>
                   
                   <p className="text-base sm:text-lg text-white/95 leading-relaxed drop-shadow-lg">
