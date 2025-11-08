@@ -110,8 +110,20 @@ function ProtectedImage({ src, alt, className, style, loading, onClick, showWate
     );
   };
 
-  // Если водяной знак отключен, возвращаем просто img как раньше
-  if (!showWatermark) {
+  // Проверяем размер экрана и показываем водяной знак только на десктопе
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Если водяной знак отключен ИЛИ мобильная версия, возвращаем просто img
+  if (!showWatermark || !isDesktop) {
     return (
       <img
         src={src}
@@ -817,6 +829,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 {Object.values(PACKS).map((p) => (
                     <div
                         key={p.key}
+                        data-pack={p.key}
                         // Добавление hover-эффекта для карточек
                         className="text-left rounded-2xl border border-neutral-200 transition hover:shadow-xl hover:scale-[1.01] duration-200"
                     >
@@ -874,7 +887,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
 
 
 // Calculator Section (from App.js with App2.js enhancements)
-  function Calculator({ activePack, setActivePack, totalWithPromoRef, priceAnimated, setPriceAnimated, calculatorCaptchaToken, setCalculatorCaptchaToken, daysLeft }) {
+  function Calculator({ activePack, setActivePack, totalWithPromoRef, priceAnimated, setPriceAnimated, calculatorCaptchaToken, setCalculatorCaptchaToken, daysLeft, calculatorUsers, showPreview, setShowPreview }) {
     const pack = PACKS[activePack];
     const [choices, setChoices] = useState(() => {
         const defaults = {};
@@ -887,6 +900,104 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
     const [promoEnabled, setPromoEnabled] = useState(PROMO.enabled);
     const [mortgageEnabled, setMortgageEnabled] = useState(false);
     const [isSent, setIsSent] = useState(false); // Состояние отправки
+
+    // Рекомендованные пресеты для каждой комплектации
+    const RECOMMENDED_PRESET = {
+      standard: {
+        foundation: 'ЖБ сваи 3 м',
+        floor: 'ОСП 22 мм',
+        insulation: 'Толщина 200 мм'
+      },
+      optima: {
+        foundation: 'ЖБ сваи 3 м',
+        floor: 'ОСП 22 мм', 
+        insulation: 'Толщина 200 мм'
+      },
+      luxe: {
+        foundation: 'ЖБ сваи 3 м',
+        floor: 'ОСП 22 мм',
+        insulation: 'Толщина 200 мм'
+      }
+    };
+
+    // Функция для применения рекомендованных настроек
+    const applyRecommendedLocal = () => {
+      const recommended = RECOMMENDED_PRESET[activePack];
+      if (!recommended) return;
+
+      // Предварительно вычисляем дефолтные значения
+      const defaultValues = {};
+      Object.keys(recommended).forEach(key => {
+        if (pack.choices[key]?.options) {
+          defaultValues[key] = Object.keys(pack.choices[key].options)[0];
+        }
+      });
+
+      // Плавное применение с анимацией
+      Object.entries(recommended).forEach(([key, value], index) => {
+        setTimeout(() => {
+          // Обновляем выбор
+          setChoices(prev => ({ ...prev, [key]: value }));
+          
+          // Обновляем состояние измененных опций
+          setChangedOptions(prev => {
+            const defaultValue = defaultValues[key];
+            const newChanges = new Set(prev);
+            
+            if (value !== defaultValue) {
+              newChanges.add(key);
+            } else {
+              newChanges.delete(key);
+            }
+            
+            return newChanges;
+          });
+          
+          // Подсветка изменившегося элемента
+          const element = document.querySelector(`[data-choice="${key}"]`);
+          element?.classList.add('animate-pulse-green');
+          
+          setTimeout(() => {
+            element?.classList.remove('animate-pulse-green');
+          }, 1000);
+        }, index * 300);
+      });
+    };
+
+    // Функция подсветки аддонов неоном
+    const highlightAddons = async () => {
+      const checkboxes = document.querySelectorAll('.addon-checkbox');
+      for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].classList.add('animate-neon-run');
+        await new Promise(resolve => setTimeout(resolve, 200));
+        checkboxes[i].classList.remove('animate-neon-run');
+      }
+    };
+
+    // Экспонируем функцию highlightAddons глобально для Intersection Observer
+    useEffect(() => {
+      window.highlightCalculatorAddons = highlightAddons;
+      return () => {
+        delete window.highlightCalculatorAddons;
+      };
+    }, []);
+
+    // Функция для отслеживания изменений от дефолтных значений
+    const [changedOptions, setChangedOptions] = useState(new Set());
+
+    const handleChoiceChange = (key, value) => {
+      const defaultValue = Object.keys(pack.choices[key].options)[0];
+      const newChanges = new Set(changedOptions);
+      
+      if (value !== defaultValue) {
+        newChanges.add(key);
+      } else {
+        newChanges.delete(key);
+      }
+      
+      setChangedOptions(newChanges);
+      setChoices(prev => ({ ...prev, [key]: value }));
+    };
 
     // Recalculate choices defaults when activePack changes
     useEffect(() => {
@@ -998,6 +1109,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
 
         if (success) {
             setIsSent(true);
+            setShowPreview(false);
             setCalculatorCaptchaToken(null); // Сброс токена после успешной отправки
         } else {
             // Резервное сообщение об ошибке
@@ -1008,7 +1120,17 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
 
   return (
     <section id="calc" className="mx-auto max-w-7xl px-4 pb-8 lg:pb-8 pb-24 relative">
-      <h3 className="text-2xl font-bold mb-6">Узнайте стоимость Вашего дома за 3 шага!</h3>
+      <div className="text-center mb-6">
+        <h3 className="text-2xl font-bold mb-4">Узнайте стоимость Вашего дома за 3 шага!</h3>
+        
+        {/* Счетчик пользователей */}
+        <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="animate-count-up">{calculatorUsers}</span>
+          <span>человек сейчас рассчитывают стоимость</span>
+        </div>
+      </div>
+
   <div className="grid lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-2 space-y-6">
           {/* Этап 1: Выбор комплектации */}
@@ -1054,9 +1176,26 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
           
           {/* Этап 2: Настройка конфигурации */}
           <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-            <div className="flex items-center gap-4 mb-5">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
-              <h4 className="text-lg font-semibold text-neutral-900">Внесите свои изменения</h4>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
+                <div>
+                  <h4 className="text-lg font-semibold text-neutral-900">Внесите свои изменения</h4>
+                  {changedOptions.size > 0 && (
+                    <div className="text-xs text-emerald-600 font-medium">
+                      ✅ Изменено опций: {changedOptions.size}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Кнопка выбора рекомендованного */}
+              <button
+                onClick={applyRecommendedLocal}
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+              >
+                ⚡ Выбрать рекомендованное
+              </button>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               {Object.entries(pack.choices).map(([key, cfg]) => (
@@ -1065,11 +1204,14 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     {cfg.label}
                   </label>
                   <select
+                    data-choice={key}
                     value={choices[key]}
-                    onChange={(e) =>
-                      setChoices((prev) => ({ ...prev, [key]: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 rounded-lg border border-neutral-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    onChange={(e) => handleChoiceChange(key, e.target.value)}
+                    className={`w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
+                      changedOptions.has(key) 
+                        ? 'border-emerald-400 bg-emerald-50 font-semibold' 
+                        : 'border-neutral-300 bg-white'
+                    }`}
                   >
                     {Object.entries(cfg.options).map(([label, delta]) => {
                       const isColor = cfg.label.toLowerCase().includes("цвет");
@@ -1094,9 +1236,19 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
 
           {/* Этап 3: Дополнительные услуги */}
           <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-            <div className="flex items-center gap-4 mb-5">
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
-              <h4 className="text-lg font-semibold text-neutral-900">Добавьте в расчет</h4>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
+                <h4 className="text-lg font-semibold text-neutral-900">Добавьте в расчет</h4>
+              </div>
+              
+              {/* Кнопка для демонстрации неоновой пробежки */}
+              <button
+                onClick={highlightAddons}
+                className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-1"
+              >
+                ✨ Показать все опции
+              </button>
             </div>
             <div className="space-y-4">
               {ADDONS.map((a) => (
@@ -1128,7 +1280,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                         onChange={(e) =>
                           setAddons((prev) => ({ ...prev, [a.key]: e.target.checked }))
                         }
-                        className="h-5 w-5 rounded text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0 mt-1"
+                        className="addon-checkbox h-5 w-5 rounded text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0 mt-1"
                       />
                     </label>
                   )}
@@ -1241,6 +1393,33 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 </span>
               </div>
             </div>
+
+            {/* Предварительный показ результата */}
+            {showPreview && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div className="text-center mb-3">
+                  <h5 className="font-bold text-blue-800 mb-2">🎯 Ваш результат готов!</h5>
+                  <div className="text-2xl font-extrabold text-blue-900 mb-2">
+                    {rub(totalWithPromo)}
+                  </div>
+                  <p className="text-sm text-blue-700">
+                    💰 Экономия с текущей скидкой: <span className="font-bold">{rub(promoAmount)}</span>
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-blue-600 mb-3">
+                    Оставьте контакты, чтобы зафиксировать цену и получить подробную смету
+                  </p>
+                  <button
+                    onClick={() => setShowPreview(false)}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                  >
+                    Зафиксировать цену
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {isSent ? (
               <div className="mt-4 p-4 bg-emerald-100 border border-emerald-400 rounded-xl text-center">
                   <p className="font-bold text-emerald-700">✅ По готовности отправим Вам расчет!</p>
@@ -1253,7 +1432,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     Сделать новый расчет
                   </button>
               </div>
-            ) : (
+            ) : !showPreview ? (
               <form
               className="mt-4 grid gap-3"
               onSubmit={handleCalculatorSubmit}
@@ -1322,7 +1501,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 * Доставка и бытовка рассчитываются индивидуально.
               </div>
             </form>
-            )}
+            ) : null}
             
           </div>
         </aside>
@@ -1754,6 +1933,18 @@ function UyutLanding() {
   const [appointmentCaptchaToken, setAppointmentCaptchaToken] = useState(null);
   const [ctaCaptchaToken, setCtaCaptchaToken] = useState(null);
   const [faqCallbackCaptchaToken, setFaqCallbackCaptchaToken] = useState(null);
+
+  // Состояния для интерактивных элементов
+  const [visibleSection, setVisibleSection] = useState('');
+  const [changedOptions, setChangedOptions] = useState(new Set());
+  const [calculatorUsers, setCalculatorUsers] = useState(16); // Начальное значение счетчика
+  const [showPreview, setShowPreview] = useState(true); // Предварительный показ результата
+
+
+
+
+
+
   
 
 
@@ -1821,6 +2012,10 @@ function UyutLanding() {
 
   // Показывать попап при попытке ухода (exit intent + mobile back button)
   useEffect(() => {
+    // Проверяем, показывался ли уже popup в этой сессии браузера
+    const popupShown = sessionStorage.getItem('promoPopupShown');
+    if (popupShown) return;
+    
     // Проверяем устройство и соответствующую настройку
     const isDesktop = window.matchMedia && window.matchMedia('(min-width: 768px)').matches;
     
@@ -1828,13 +2023,18 @@ function UyutLanding() {
     if (!isDesktop && !PROMO.exitPopupMobileEnabled) return;
     
     function handleExitIntent(e) {
+      // Показываем popup только если он еще не был показан
+      if (showPromoPopup) return;
+      
       // Desktop: показываем попап только если мышь ушла за верхнюю границу окна
       if (e.type === 'mouseout' && e.relatedTarget == null && e.clientY <= 0) {
         setShowPromoPopup(true);
+        sessionStorage.setItem('promoPopupShown', 'true');
       }
       // Desktop: если окно потеряло focus (blur), показываем только если мышь в верхней части экрана
       if (e.type === 'blur' && window.screenY === 0) {
         setShowPromoPopup(true);
+        sessionStorage.setItem('promoPopupShown', 'true');
       }
     }
 
@@ -1842,6 +2042,7 @@ function UyutLanding() {
       // Mobile: при попытке покинуть страницу (кнопка "Назад", закрытие вкладки)
       if (!showPromoPopup) {
         setShowPromoPopup(true);
+        sessionStorage.setItem('promoPopupShown', 'true');
         
         // Предотвращаем немедленный уход со страницы, чтобы показать popup
         e.preventDefault();
@@ -1905,6 +2106,68 @@ function UyutLanding() {
   // Инициализация фиксированных цен проектов при монтировании компонента
   useEffect(() => {
     initProjectPrices();
+  }, []);
+
+  // Intersection Observer для отслеживания скролла
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setVisibleSection(entry.target.id);
+          
+          // Подсветка активной комплектации при входе в секцию
+          if (entry.target.id === 'packs') {
+            setTimeout(() => {
+              const activeCard = document.querySelector(`[data-pack="${activePack}"]`);
+              if (activeCard) {
+                activeCard.classList.add('animate-glow');
+                setTimeout(() => {
+                  activeCard.classList.remove('animate-glow');
+                }, 2000);
+              }
+            }, 500);
+          }
+          
+          // Подсветка аддонов при входе в секцию калькулятора
+          if (entry.target.id === 'calc') {
+            setTimeout(() => {
+              if (window.highlightCalculatorAddons) {
+                window.highlightCalculatorAddons();
+              }
+            }, 1000);
+          }
+        }
+      });
+    }, { threshold: 0.3 });
+
+    // Наблюдаем за секциями
+    const sections = document.querySelectorAll('#packs, #calc, #gallery');
+    sections.forEach(section => {
+      if (section) observer.observe(section);
+    });
+
+    return () => {
+      sections.forEach(section => {
+        if (section) observer.unobserve(section);
+      });
+    };
+  }, [activePack]);
+
+  // Счетчик активных пользователей калькулятора
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Случайное изменение счетчика (имитация реального времени)
+      const change = Math.random() > 0.5 ? 
+        Math.floor(Math.random() * 3) + 1 : 
+        -Math.floor(Math.random() * 2);
+      
+      setCalculatorUsers(prev => {
+        const newCount = Math.max(11, Math.min(23, prev + change));
+        return newCount;
+      });
+    }, 8000 + Math.random() * 7000); // Обновление каждые 8-15 секунд
+
+    return () => clearInterval(interval);
   }, []);
 
   // Синхронизация строки цены для хедера
@@ -2387,6 +2650,9 @@ function UyutLanding() {
             calculatorCaptchaToken={calculatorCaptchaToken}
             setCalculatorCaptchaToken={setCalculatorCaptchaToken}
             daysLeft={daysLeft}
+            calculatorUsers={calculatorUsers}
+            showPreview={showPreview}
+            setShowPreview={setShowPreview}
           />
         {/* Отзывы и FAQ сразу после калькулятора для снятия возражений */}
         <YandexReviewsWidget 
