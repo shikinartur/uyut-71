@@ -689,6 +689,8 @@ function Modal({ images = [], startIndex = 0, onClose, watermarkType = "default"
 
 // Order Modal Component
 function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) {
+  const [validationErrors, setValidationErrors] = useState({});
+  
   if (!isOpen || !pack) return null;
 
   const handleSubmit = async (e) => {
@@ -696,7 +698,29 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
     
-    if (!payload.name || !payload.phone) return;
+    // Сброс предыдущих ошибок
+    setValidationErrors({});
+    
+    let hasErrors = false;
+    const newErrors = {};
+    
+    if (!payload.name?.trim()) {
+        newErrors.name = 'Пожалуйста, введите ваше имя';
+        hasErrors = true;
+    }
+    
+    if (!payload.phone?.trim()) {
+        newErrors.phone = 'Пожалуйста, введите номер телефона';
+        hasErrors = true;
+    } else if (!isValidPhone(payload.phone)) {
+        newErrors.phone = 'Пожалуйста, введите полный номер телефона';
+        hasErrors = true;
+    }
+    
+    if (hasErrors) {
+        setValidationErrors(newErrors);
+        return;
+    }
 
     const data = {
       ...payload,
@@ -783,8 +807,16 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
                   type="text"
                   required
                   placeholder="Ваше имя"
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 ${
+                    validationErrors.name 
+                      ? 'border-red-400 focus:ring-red-500 bg-red-50' 
+                      : 'border-neutral-300 focus:ring-emerald-500'
+                  }`}
+                  onChange={() => setValidationErrors(prev => ({...prev, name: ''}))}
                 />
+                {validationErrors.name && (
+                  <p className="text-red-500 text-sm mt-1">{validationErrors.name}</p>
+                )}
               </div>
               <div>
                 <InputMask
@@ -792,9 +824,17 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
                   name="phone"
                   required
                   placeholder="+7 (XXX) XXX-XX-XX"
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 ${
+                    validationErrors.phone 
+                      ? 'border-red-400 focus:ring-red-500 bg-red-50' 
+                      : 'border-neutral-300 focus:ring-emerald-500'
+                  }`}
                   inputMode="tel"
+                  onChange={() => setValidationErrors(prev => ({...prev, phone: ''}))}
                 />
+                {validationErrors.phone && (
+                  <p className="text-red-500 text-sm mt-1">{validationErrors.phone}</p>
+                )}
               </div>
               
               <p className="text-xs text-neutral-500 text-center">
@@ -900,6 +940,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
     const [promoEnabled, setPromoEnabled] = useState(PROMO.enabled);
     const [mortgageEnabled, setMortgageEnabled] = useState(false);
     const [isSent, setIsSent] = useState(false); // Состояние отправки
+    const [validationErrors, setValidationErrors] = useState({}); // Ошибки валидации
 
     // Рекомендованные пресеты для каждой комплектации
     const RECOMMENDED_PRESET = {
@@ -1033,8 +1074,10 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
         });
         setChoices(defaults);
         setAddons({});
+        setChangedOptions(new Set()); // Сброс отслеживания измененных опций
         setMortgageEnabled(false); // Сброс статуса ипотеки
         setIsSent(false); // Сброс статуса отправки
+        setValidationErrors({}); // Сброс ошибок валидации
     }, [activePack, pack.choices]);
 
     const choicesSum = useMemo(() => {
@@ -1086,11 +1129,27 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
         const fd = new FormData(e.currentTarget);
         const payload = Object.fromEntries(fd.entries());
         
-        if (!payload.name || !payload.phone) return;
+        // Сброс предыдущих ошибок
+        setValidationErrors({});
         
-        // Проверка, что номер телефона введен полностью
-        if (!isValidPhone(payload.phone)) {
-            alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
+        let hasErrors = false;
+        const newErrors = {};
+        
+        if (!payload.name?.trim()) {
+            newErrors.name = 'Пожалуйста, введите ваше имя';
+            hasErrors = true;
+        }
+        
+        if (!payload.phone?.trim()) {
+            newErrors.phone = 'Пожалуйста, введите номер телефона';
+            hasErrors = true;
+        } else if (!isValidPhone(payload.phone)) {
+            newErrors.phone = 'Пожалуйста, введите полный номер телефона';
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
+            setValidationErrors(newErrors);
             return;
         }
         
@@ -1474,8 +1533,16 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     type="text"
                     required
                     placeholder="Имя"
-                    className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-900"
+                    className={`w-full px-3 py-2 rounded-xl border focus:outline-none focus:ring-2 ${
+                      validationErrors.name 
+                        ? 'border-red-400 focus:ring-red-500 bg-red-50' 
+                        : 'border-neutral-300 focus:ring-emerald-500'
+                    }`}
+                    onChange={() => setValidationErrors(prev => ({...prev, name: ''}))}
                   />
+                  {validationErrors.name && (
+                    <p className="text-red-500 text-sm mt-1">{validationErrors.name}</p>
+                  )}
                 </div>
                 <div>
                   <InputMask
@@ -1483,9 +1550,17 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     name="phone"
                     required
                     placeholder="+7 (XXX) XXX-XX-XX"
-                    className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-900"
+                    className={`w-full px-3 py-2 rounded-xl border focus:outline-none focus:ring-2 ${
+                      validationErrors.phone 
+                        ? 'border-red-400 focus:ring-red-500 bg-red-50' 
+                        : 'border-neutral-300 focus:ring-emerald-500'
+                    }`}
                     inputMode="tel"
+                    onChange={() => setValidationErrors(prev => ({...prev, phone: ''}))}
                   />
+                  {validationErrors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{validationErrors.phone}</p>
+                  )}
                 </div>
                 <div>
                   <textarea
@@ -1669,7 +1744,9 @@ function YandexReviewsWidget({
   isFaqCallbackSent, 
   setIsFaqCallbackSent, 
   handleFaqCallbackSubmit, 
-  setFaqCallbackCaptchaToken 
+  setFaqCallbackCaptchaToken,
+  faqValidationErrors,
+  setFaqValidationErrors
 }) {
   const reviewsUrl = "https://yandex.ru/maps-reviews-widget/104037212737?comments";
   
@@ -1788,29 +1865,55 @@ function YandexReviewsWidget({
                       ) : (
                         <form className="space-y-3 max-w-md mx-auto" onSubmit={handleFaqCallbackSubmit}>
                           
-                          <input
-                            type="text"
-                            name="name"
-                            required
-                            placeholder="Ваше имя"
-                            className="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                          />
-                          <InputMask
-                            mask="+7 (999) 999-99-99"
-                            name="phone"
-                            required
-                            placeholder="+7 (XXX) XXX-XX-XX"
-                            className="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            inputMode="tel"
-                          />
+                          <div>
+                            <input
+                              type="text"
+                              name="name"
+                              required
+                              placeholder="Ваше имя"
+                              className={`w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 ${
+                                faqValidationErrors.name 
+                                  ? 'border-red-400 focus:ring-red-500 bg-red-50' 
+                                  : 'border-neutral-300 focus:ring-emerald-500'
+                              }`}
+                              onChange={() => setFaqValidationErrors(prev => ({...prev, name: ''}))}
+                            />
+                            {faqValidationErrors.name && (
+                              <p className="text-red-500 text-sm mt-1">{faqValidationErrors.name}</p>
+                            )}
+                          </div>
+                          <div>
+                            <InputMask
+                              mask="+7 (999) 999-99-99"
+                              name="phone"
+                              required
+                              placeholder="+7 (XXX) XXX-XX-XX"
+                              className={`w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 ${
+                                faqValidationErrors.phone 
+                                  ? 'border-red-400 focus:ring-red-500 bg-red-50' 
+                                  : 'border-neutral-300 focus:ring-emerald-500'
+                              }`}
+                              inputMode="tel"
+                              onChange={() => setFaqValidationErrors(prev => ({...prev, phone: ''}))}
+                            />
+                            {faqValidationErrors.phone && (
+                              <p className="text-red-500 text-sm mt-1">{faqValidationErrors.phone}</p>
+                            )}
+                          </div>
                           
                                                     
                           <div className="flex justify-center">
                             <SmartCaptcha 
-                              onSuccess={(token) => setFaqCallbackCaptchaToken(token)} 
+                              onSuccess={(token) => {
+                                setFaqCallbackCaptchaToken(token);
+                                setFaqValidationErrors(prev => ({...prev, captcha: ''}));
+                              }} 
                               onError={(error) => console.error('Captcha error:', error)}
                             />
                           </div>
+                          {faqValidationErrors.captcha && (
+                            <p className="text-red-500 text-sm text-center">{faqValidationErrors.captcha}</p>
+                          )}
                           
                           <button
                             type="submit"
@@ -1858,7 +1961,7 @@ function YandexReviewsWidget({
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
                             </svg>
-                            WHATSAPP - написать
+                            WhatsApp - написать
                         </a>
                     </div>
                 </div>
@@ -1956,6 +2059,7 @@ function UyutLanding() {
   const [isPromoFormSent, setIsPromoFormSent] = useState(false);
   const [isAppointmentFormSent, setIsAppointmentFormSent] = useState(false);
   const [isFaqCallbackSent, setIsFaqCallbackSent] = useState(false);
+  const [isCtaFormSent, setIsCtaFormSent] = useState(false);
   
   // Состояния для Yandex SmartCaptcha
   const [calculatorCaptchaToken, setCalculatorCaptchaToken] = useState(null);
@@ -1963,6 +2067,12 @@ function UyutLanding() {
   const [appointmentCaptchaToken, setAppointmentCaptchaToken] = useState(null);
   const [ctaCaptchaToken, setCtaCaptchaToken] = useState(null);
   const [faqCallbackCaptchaToken, setFaqCallbackCaptchaToken] = useState(null);
+
+  // Состояния для валидации форм
+  const [ctaValidationErrors, setCtaValidationErrors] = useState({});
+  const [faqValidationErrors, setFaqValidationErrors] = useState({});
+  const [promoValidationErrors, setPromoValidationErrors] = useState({});
+  const [appointmentValidationErrors, setAppointmentValidationErrors] = useState({});
 
   // Состояния для интерактивных элементов
   const [visibleSection, setVisibleSection] = useState('');
@@ -2218,17 +2328,33 @@ function UyutLanding() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
-    if (!payload.name || !payload.phone) return;
     
-    // Проверка, что номер телефона введен полностью
-    if (!isValidPhone(payload.phone)) {
-        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
-        return;
+    // Сброс предыдущих ошибок
+    setPromoValidationErrors({});
+    
+    let hasErrors = false;
+    const newErrors = {};
+    
+    if (!payload.name?.trim()) {
+        newErrors.name = 'Пожалуйста, введите ваше имя';
+        hasErrors = true;
     }
     
-    // Проверка капчи
+    if (!payload.phone?.trim()) {
+        newErrors.phone = 'Пожалуйста, введите номер телефона';
+        hasErrors = true;
+    } else if (!isValidPhone(payload.phone)) {
+        newErrors.phone = 'Пожалуйста, введите полный номер телефона';
+        hasErrors = true;
+    }
+    
     if (!promoCaptchaToken) {
-        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+        hasErrors = true;
+    }
+    
+    if (hasErrors) {
+        setPromoValidationErrors(newErrors);
         return;
     }
 
@@ -2253,17 +2379,33 @@ function UyutLanding() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
-    if (!payload.name || !payload.phone) return;
     
-    // Проверка, что номер телефона введен полностью
-    if (!isValidPhone(payload.phone)) {
-        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
-        return;
+    // Сброс предыдущих ошибок
+    setAppointmentValidationErrors({});
+    
+    let hasErrors = false;
+    const newErrors = {};
+    
+    if (!payload.name?.trim()) {
+        newErrors.name = 'Пожалуйста, введите ваше имя';
+        hasErrors = true;
     }
     
-    // Проверка капчи
+    if (!payload.phone?.trim()) {
+        newErrors.phone = 'Пожалуйста, введите номер телефона';
+        hasErrors = true;
+    } else if (!isValidPhone(payload.phone)) {
+        newErrors.phone = 'Пожалуйста, введите полный номер телефона';
+        hasErrors = true;
+    }
+    
     if (!appointmentCaptchaToken) {
-        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+        hasErrors = true;
+    }
+    
+    if (hasErrors) {
+        setAppointmentValidationErrors(newErrors);
         return;
     }
 
@@ -2286,17 +2428,33 @@ function UyutLanding() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
-    if (!payload.name || !payload.phone) return;
     
-    // Проверка, что номер телефона введен полностью
-    if (!isValidPhone(payload.phone)) {
-        alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
-        return;
+    // Сброс предыдущих ошибок
+    setFaqValidationErrors({});
+    
+    let hasErrors = false;
+    const newErrors = {};
+    
+    if (!payload.name?.trim()) {
+        newErrors.name = 'Пожалуйста, введите ваше имя';
+        hasErrors = true;
     }
     
-    // Проверка капчи
+    if (!payload.phone?.trim()) {
+        newErrors.phone = 'Пожалуйста, введите номер телефона';
+        hasErrors = true;
+    } else if (!isValidPhone(payload.phone)) {
+        newErrors.phone = 'Пожалуйста, введите полный номер телефона';
+        hasErrors = true;
+    }
+    
     if (!faqCallbackCaptchaToken) {
-        alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+        newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+        hasErrors = true;
+    }
+    
+    if (hasErrors) {
+        setFaqValidationErrors(newErrors);
         return;
     }
 
@@ -2690,6 +2848,8 @@ function UyutLanding() {
           setIsFaqCallbackSent={setIsFaqCallbackSent}
           handleFaqCallbackSubmit={handleFaqCallbackSubmit}
           setFaqCallbackCaptchaToken={setFaqCallbackCaptchaToken}
+          faqValidationErrors={faqValidationErrors}
+          setFaqValidationErrors={setFaqValidationErrors}
         />
 
         {/* Наши партнеры: Проверенные материалы */}
@@ -3122,20 +3282,46 @@ function UyutLanding() {
                     </span>
                    </p>
               </div>
-              <form className="bg-white text-neutral-900 rounded-2xl p-6 space-y-4 shadow-2xl" onSubmit={async (e) => {
+              {isCtaFormSent ? (
+                <div className="bg-white text-neutral-900 rounded-2xl p-6 shadow-2xl">
+                  <SuccessMessage
+                    title="✅ Заявка отправлена!"
+                    subtitle="Ожидайте звонка нашего менеджера в ближайшее время."
+                    onReset={() => setIsCtaFormSent(false)}
+                  />
+                </div>
+              ) : (
+                <form className="bg-white text-neutral-900 rounded-2xl p-6 space-y-4 shadow-2xl" onSubmit={async (e) => {
                   e.preventDefault();
                   const fd = new FormData(e.currentTarget);
                   const payload = Object.fromEntries(fd.entries());
                   
-                  // Проверка, что номер телефона введен полностью
-                  if (!isValidPhone(payload.phone)) {
-                      alert('Пожалуйста, введите полный номер телефона (+7 (XXX) XXX-XX-XX)');
-                      return;
+                  // Сброс предыдущих ошибок
+                  setCtaValidationErrors({});
+                  
+                  let hasErrors = false;
+                  const newErrors = {};
+                  
+                  if (!payload.name?.trim()) {
+                      newErrors.name = 'Пожалуйста, введите ваше имя';
+                      hasErrors = true;
                   }
                   
-                  // Проверка капчи
+                  if (!payload.phone?.trim()) {
+                      newErrors.phone = 'Пожалуйста, введите номер телефона';
+                      hasErrors = true;
+                  } else if (!isValidPhone(payload.phone)) {
+                      newErrors.phone = 'Пожалуйста, введите полный номер телефона';
+                      hasErrors = true;
+                  }
+                  
                   if (!ctaCaptchaToken) {
-                      alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
+                      newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+                      hasErrors = true;
+                  }
+                  
+                  if (hasErrors) {
+                      setCtaValidationErrors(newErrors);
                       return;
                   }
 
@@ -3148,42 +3334,50 @@ function UyutLanding() {
                   const success = await sendDataToApi(data, 'CTA_Block');
                   
                   if (success) {
-                    // Используем SuccessMessage (хотя бы консольный вывод) или делаем редирект на #calc
-                    // Для CTA блока, где нет isSent state, пока оставим логику:
-                    e.target.reset(); // Очистка формы
+                    setIsCtaFormSent(true);
                     setCtaCaptchaToken(null); // Сброс токена
-                    const button = e.target.querySelector('button[type="submit"]');
-                    if (button) {
-                        button.textContent = "✅ Заявка отправлена!";
-                        button.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
-                        button.classList.add('bg-green-600');
-                        setTimeout(() => {
-                           button.textContent = "ОТПРАВИТЬ";
-                           button.classList.remove('bg-green-600');
-                           button.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
-                        }, 3000);
-                    }
+                    setCtaValidationErrors({}); // Сброс ошибок валидации
                   } else {
                     console.error("Произошла ошибка при отправке заявки. Пожалуйста, позвоните нам.");
                   }
                 }}>
                 {/* ПРАВКА 1: Новый заголовок для формы консультации */}
                 <h3 className="text-xl font-bold text-center">Получить консультацию по телефону</h3>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  placeholder="Ваше имя"
-                  className="w-full px-3 py-3 rounded-xl border-2 border-neutral-300 focus:outline-none focus:ring-4 focus:ring-emerald-300"
-                />
-                <InputMask
-                  mask="+7 (999) 999-99-99"
-                  name="phone"
-                  required
-                  placeholder="+7 (XXX) XXX-XX-XX — Телефон"
-                  className="w-full px-3 py-3 rounded-xl border-2 border-neutral-300 focus:outline-none focus:ring-4 focus:ring-emerald-300"
-                  inputMode="tel"
-                />
+                <div>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Ваше имя"
+                    className={`w-full px-3 py-3 rounded-xl border-2 focus:outline-none focus:ring-4 ${
+                      ctaValidationErrors.name 
+                        ? 'border-red-400 focus:ring-red-300 bg-red-50' 
+                        : 'border-neutral-300 focus:ring-emerald-300'
+                    }`}
+                    onChange={() => setCtaValidationErrors(prev => ({...prev, name: ''}))}
+                  />
+                  {ctaValidationErrors.name && (
+                    <p className="text-red-500 text-sm mt-1">{ctaValidationErrors.name}</p>
+                  )}
+                </div>
+                <div>
+                  <InputMask
+                    mask="+7 (999) 999-99-99"
+                    name="phone"
+                    required
+                    placeholder="+7 (XXX) XXX-XX-XX — Телефон"
+                    className={`w-full px-3 py-3 rounded-xl border-2 focus:outline-none focus:ring-4 ${
+                      ctaValidationErrors.phone 
+                        ? 'border-red-400 focus:ring-red-300 bg-red-50' 
+                        : 'border-neutral-300 focus:ring-emerald-300'
+                    }`}
+                    inputMode="tel"
+                    onChange={() => setCtaValidationErrors(prev => ({...prev, phone: ''}))}
+                  />
+                  {ctaValidationErrors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{ctaValidationErrors.phone}</p>
+                  )}
+                </div>
                 
                 {/* ПРАВКА 1: Поле с вопросом "С чего начать?" */}
                 <textarea
@@ -3202,11 +3396,17 @@ function UyutLanding() {
                 <div className="flex justify-center w-full max-w-full overflow-hidden">
                   <div className="w-full max-w-xs">
                     <SmartCaptcha 
-                      onSuccess={(token) => setCtaCaptchaToken(token)} 
+                      onSuccess={(token) => {
+                        setCtaCaptchaToken(token);
+                        setCtaValidationErrors(prev => ({...prev, captcha: ''}));
+                      }} 
                       onError={(error) => console.error('Captcha error:', error)}
                     />
                   </div>
                 </div>
+                {ctaValidationErrors.captcha && (
+                  <p className="text-red-500 text-sm text-center">{ctaValidationErrors.captcha}</p>
+                )}
                 
                 <button
                   type="submit"
@@ -3218,6 +3418,7 @@ function UyutLanding() {
                   Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
                 </p>
               </form>
+              )}
             </div>
           </section>
         </main>
