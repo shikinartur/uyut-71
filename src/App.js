@@ -730,7 +730,7 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
           </h3>
           <div className="mt-3 space-y-2">
             <div className="text-sm text-neutral-600">
-              Обычная цена: <span className="font-semibold">{rub(pack.basePrice)}</span>
+              Базовая цена: <span className="font-semibold">{rub(pack.basePrice)}</span>
             </div>
             <div className="bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg">
               <div className="flex items-center justify-between mb-1">
@@ -825,7 +825,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
              
             </div>
             
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Object.values(PACKS).map((p) => (
                     <div
                         key={p.key}
@@ -853,7 +853,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                             <div className="mb-4 space-y-3">
                                 {/* Обычная цена */}
                                 <div className="text-sm text-neutral-600">
-                                    Обычная цена: <span className="font-semibold">{rub(p.basePrice)}</span>
+                                    Базовая цена: <span className="font-semibold">{rub(p.basePrice)}</span>
                                 </div>
                                 
                                 {/* Цена со скидкой */}
@@ -965,12 +965,38 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
     };
 
     // Функция подсветки аддонов неоном
-    const highlightAddons = async () => {
-      const checkboxes = document.querySelectorAll('.addon-checkbox');
-      for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].classList.add('animate-neon-run');
-        await new Promise(resolve => setTimeout(resolve, 200));
-        checkboxes[i].classList.remove('animate-neon-run');
+    const highlightAddons = () => {
+      try {
+        const checkboxes = document.querySelectorAll('.addon-checkbox');
+        if (!checkboxes || checkboxes.length === 0) {
+          console.warn('No addon checkboxes found');
+          return;
+        }
+        
+        // Используем обычные setTimeout вместо async/await для лучшей совместимости с iOS
+        let index = 0;
+        
+        const highlightNext = () => {
+          if (index < checkboxes.length) {
+            const checkbox = checkboxes[index];
+            if (checkbox) {
+              checkbox.classList.add('animate-neon-run');
+              
+              setTimeout(() => {
+                if (checkbox) {
+                  checkbox.classList.remove('animate-neon-run');
+                }
+              }, 600);
+              
+              index++;
+              setTimeout(highlightNext, 200);
+            }
+          }
+        };
+        
+        highlightNext();
+      } catch (error) {
+        console.error('Error in highlightAddons:', error);
       }
     };
 
@@ -1137,10 +1163,10 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
           <div className="bg-white rounded-2xl border border-neutral-200 p-6">
             <div className="flex items-center gap-4 mb-5">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">1</div>
-              <h4 className="text-lg font-semibold text-neutral-900">Выберите комплектацию</h4>
+              <h4 className="text-lg font-semibold text-neutral-900">Выберите комплектацию 👇</h4>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-3">
                 <label className="block text-sm font-medium text-neutral-600">Комплектация</label>
                 <select
@@ -1154,7 +1180,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 </select>
               </div>
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-neutral-600">Базовая цена</label>
+                <label className="block text-sm font-medium text-neutral-600">Базовая цена без скидки</label>
                 <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
                   <span className="text-2xl md:text-3xl font-extrabold text-neutral-900">{rub(basePrice)}</span>
                 </div>
@@ -1163,7 +1189,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
 
             <div className="border-t border-neutral-200 pt-5">
               <h5 className="text-base font-semibold mb-3 text-neutral-700">Что входит в комплектацию</h5>
-              <div className="grid md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {Object.values(pack.fixedDetails).map((detail, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-neutral-700">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
@@ -1180,7 +1206,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
                 <div>
-                  <h4 className="text-lg font-semibold text-neutral-900">Внесите свои изменения</h4>
+                  <h4 className="text-lg font-semibold text-neutral-900">Внесите свои изменения 👇</h4>
                   {changedOptions.size > 0 && (
                     <div className="text-xs text-emerald-600 font-medium">
                       ✅ Изменено опций: {changedOptions.size}
@@ -1192,12 +1218,12 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
               {/* Кнопка выбора рекомендованного */}
               <button
                 onClick={applyRecommendedLocal}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+                className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-1"
               >
                 ⚡ Выбрать рекомендованное
               </button>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(pack.choices).map(([key, cfg]) => (
                 <div key={key} className="space-y-2">
                   <label className="block text-sm font-semibold text-neutral-700">
@@ -1239,13 +1265,21 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
-                <h4 className="text-lg font-semibold text-neutral-900">Добавьте в расчет</h4>
+                <h4 className="text-lg font-semibold text-neutral-900">Добавьте в расчет 👇</h4>
               </div>
               
               {/* Кнопка для демонстрации неоновой пробежки */}
               <button
-                onClick={highlightAddons}
-                className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-1"
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  highlightAddons();
+                }}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                }}
+                className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-1 active:scale-95"
               >
                 ✨ Показать все опции
               </button>
@@ -1321,6 +1355,30 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 {/* Единый блок дополнительных опций */}
                 <div className="space-y-3 pb-3 border-b border-neutral-200">
                   
+                  {/* Блок акции - в едином стиле */}
+                  <div className="bg-neutral-50 rounded-lg p-3 border border-neutral-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="inline-flex items-center gap-2 font-medium text-sm">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded text-neutral-600 focus:ring-neutral-500"
+                          checked={promoEnabled}
+                          onChange={(e) => setPromoEnabled(e.target.checked)}
+                        />
+                        <span>Скидка от Grand_Line {PROMO.percent * 100}%</span>
+                      </label>
+                      {promoEnabled && (
+                        <span className="font-semibold text-xl text-red-600">
+                          -{rub(promoAmount)}
+                        </span>
+                      )}
+                    </div>
+                    {/* Улучшенное напоминание о времени акции */}
+                    <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200 text-center animate-pulse">
+                     ⏰ ЗАФИКСИРУЙ СКИДКУ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
+                    </div>
+                  </div>
+
                   {/* Блок ипотеки - минималистичный дизайн */}
                   <div className="bg-neutral-50 rounded-lg p-3 border border-neutral-200">
                     <div className="flex items-center justify-between mb-3">
@@ -1359,30 +1417,6 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                       />
                     </div>
                   </div>
-
-                  {/* Блок акции - в едином стиле */}
-                  <div className="bg-neutral-50 rounded-lg p-3 border border-neutral-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="inline-flex items-center gap-2 font-medium text-sm">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded text-neutral-600 focus:ring-neutral-500"
-                          checked={promoEnabled}
-                          onChange={(e) => setPromoEnabled(e.target.checked)}
-                        />
-                        <span>Скидка от Grand_Line {PROMO.percent * 100}%</span>
-                      </label>
-                      {promoEnabled && (
-                        <span className="font-semibold text-xl text-red-600">
-                          -{rub(promoAmount)}
-                        </span>
-                      )}
-                    </div>
-                    {/* Улучшенное напоминание о времени акции */}
-                    <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200 text-center animate-pulse">
-                     ⏰ ЗАФИКСИРУЙ СКИДКУ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -1408,13 +1442,13 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 </div>
                 <div className="text-center">
                   <p className="text-xs text-blue-600 mb-3">
-                    Оставьте контакты, чтобы зафиксировать цену и получить подробную смету
+                    Заканчивается {PROMO.until}
                   </p>
                   <button
                     onClick={() => setShowPreview(false)}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
                   >
-                    Зафиксировать цену
+                    Подробный расчет
                   </button>
                 </div>
               </div>
@@ -1547,8 +1581,8 @@ function Gallery({ openModal }) {
   return (
     <section id="gallery" className="mx-auto max-w-7xl px-4 pt-0 pb-8">
       <h3 className="text-2xl font-bold mb-3">Примеры работ</h3>
-      {/* ИЗМЕНЕНИЕ ГАЛЕРЕИ: grid md:grid-cols-3, так как осталось 3 проекта */}
-      <div className="grid md:grid-cols-3 gap-3"> 
+      {/* ИЗМЕНЕНИЕ ГАЛЕРЕИ: адаптивная сетка для разных экранов */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"> 
         {GALLERY.map((project, i) => (
           <div
             key={i}
@@ -1594,7 +1628,7 @@ function FloorPlans({ openModal }) {
     return (
         <section id="plans" className="mx-auto max-w-7xl px-4 py-6">
             <h3 className="text-2xl font-bold mb-3">Планировка дома «Уют-71.ФИКС»</h3>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div
                     className="bg-white rounded-2xl border border-neutral-200 p-5 cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300"
                     onClick={() => {
@@ -1816,7 +1850,7 @@ function YandexReviewsWidget({
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.155.232.171.326.016.094.036.308.02.475z"/>
                             </svg>
-                            TELEGRAM
+                            TELEGRAM - написать
                         </a>
                         
                         <a 
@@ -1828,7 +1862,7 @@ function YandexReviewsWidget({
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
                             </svg>
-                            WHATSAPP
+                            WHATSAPP - написать
                         </a>
                     </div>
                 </div>
@@ -2885,7 +2919,7 @@ function UyutLanding() {
           
           {/* Company Section (ФИНАЛЬНОЕ ОБНОВЛЕНИЕ) */}
           <section id="company" className="mx-auto max-w-7xl px-4 py-10">
-            <div className="grid md:grid-cols-2 gap-6 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               
               {/* Левая колонка: О компании и Фото */}
               <div itemScope itemType="http://schema.org/AboutPage" className="space-y-6">
@@ -3064,7 +3098,7 @@ function UyutLanding() {
           <YandexMapWidget />
 
           <section id="cta" className="bg-white">
-            <div className="mx-auto max-w-7xl px-4 py-12 grid md:grid-cols-2 gap-8 items-center">
+            <div className="mx-auto max-w-7xl px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-extrabold text-neutral-900">С чего начать? Три простых шага к своему дому:</h2>
                 
@@ -3196,16 +3230,17 @@ function UyutLanding() {
         <div className="h-16 md:hidden"></div>
         
         {/* Виджеты мессенджеров для мобильной версии */}
-        <div className="fixed right-4 bottom-40 z-40 md:hidden flex flex-col gap-2">
+        <div className="fixed right-4 bottom-40 z-40 md:hidden flex flex-col gap-3">
           {/* WhatsApp */}
           <a
             href={`https://wa.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС».`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+            className="relative w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 messenger-animate-attention border-2 border-white"
+            style={{"--animation-delay": "10s"}}
             aria-label="Написать в WhatsApp"
           >
-            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white relative z-10" fill="currentColor">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
             </svg>
           </a>
@@ -3215,28 +3250,33 @@ function UyutLanding() {
             href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+            className="relative w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 messenger-animate-attention border-2 border-white"
+            style={{"--animation-delay": "12s"}}
             aria-label="Написать в Telegram"
           >
-            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white relative z-10" fill="currentColor">
               <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.155.232.171.326.016.094.036.308.02.475z"/>
             </svg>
           </a>
         </div>
 
         {/* Виджеты мессенджеров для десктопной версии */}
-        <div className="hidden md:flex fixed right-4 bottom-24 z-40 flex-col gap-2">
+        <div className="hidden md:flex fixed right-6 bottom-24 z-40 flex-col gap-4">
           {/* WhatsApp */}
           <a
             href={`https://wa.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС».`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+            className="group relative w-16 h-16 bg-gradient-to-br from-green-400 via-green-500 to-green-600 hover:from-green-500 hover:via-green-600 hover:to-green-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 messenger-animate-pulse border-3 border-white"
+            style={{"--animation-delay": "10s"}}
             aria-label="Написать в WhatsApp"
           >
-            <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="currentColor">
+            <svg viewBox="0 0 24 24" className="w-8 h-8 text-white relative z-10 group-hover:scale-110 transition-transform duration-300" fill="currentColor">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
             </svg>
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              WhatsApp чат
+            </div>
           </a>
           
           {/* Telegram */}
@@ -3244,12 +3284,16 @@ function UyutLanding() {
             href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-14 h-14 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+            className="group relative w-16 h-16 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 messenger-animate-pulse border-3 border-white"
+            style={{"--animation-delay": "12s"}}
             aria-label="Написать в Telegram"
           >
-            <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="currentColor">
+            <svg viewBox="0 0 24 24" className="w-8 h-8 text-white relative z-10 group-hover:scale-110 transition-transform duration-300" fill="currentColor">
               <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.155.232.171.326.016.094.036.308.02.475z"/>
             </svg>
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Telegram чат
+            </div>
           </a>
         </div>
 
@@ -3257,7 +3301,7 @@ function UyutLanding() {
         <footer className="bg-neutral-900 text-white pt-8 pb-4 relative" role="contentinfo">
           <div className="max-w-7xl mx-auto px-4">
             {/* Основной контент футера */}
-            <div className="grid md:grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
               {/* Колонка 1: Логотип и описание */}
               <div className="md:col-span-2">
                 <div className="flex items-center gap-3 mb-4">

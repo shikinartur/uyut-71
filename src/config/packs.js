@@ -12,8 +12,8 @@ const PACKS = {
       frame: `Каркас дома: калиброванный <b>камерной сушки</b>`,
       braces: `Укосины во всех несущих стенах`,
       membrane: "Изоляция: плёнки <b>Grand_Line</b>",
-      sound: "Шумоизоляция в полном объёме",
-      insulation: "Утеплитель плитный",
+      sound: "Шумоизоляция в полном объёме <b>Knauf</b>",
+      insulation: "Утеплитель плитный <b>Knauf</b>",
       windows: "Окна: ПВХ <b>Rehau</b> Constanta",
     },
     choices: {
@@ -65,8 +65,8 @@ const PACKS = {
       braces: `Укосины во всех несущих стенах`,
       membrane: "Изоляция: плёнки <b>Grand_Line</b>",
       windows: "Окна: ПВХ <b>Rehau</b> Constanta",
-      sound: "Шумоизоляция в полном объёме",
-      insulation: "Утеплитель плитный",
+      sound: "Шумоизоляция в полном объёме <b>Knauf</b>",
+      insulation: "Утеплитель плитный <b>Knauf</b>",
       ingeneering: "Выезд инженера на объект <b>в подарок</b>",
     },
     choices: {
@@ -119,8 +119,8 @@ const PACKS = {
       frame: `Каркас дома: калиброванный <b>камерной сушки</b>`,
       braces: `Укосины во всех несущих стенах`,
       membrane: "Изоляция: плёнки <b>Grand_Line</b>",
-      sound: "Шумоизоляция в полном объёме",
-      insulation: "Утеплитель плитный",
+      sound: "Шумоизоляция в полном объёме <b>Knauf</b>",
+      insulation: "Утеплитель плитный <b>Knauf</b>",
       ingeneering: "Выезд инженера на объект <b>в подарок</b>",
     },
     choices: {
