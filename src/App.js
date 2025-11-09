@@ -1062,7 +1062,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
     const basePrice = pack.basePrice;
     const total = Math.max(0, basePrice + choicesSum + addonsSum);
     const promoAmount = useMemo(() => {
-      return promoEnabled ? Math.round(total * PROMO.percent) : 0;
+      return promoEnabled ? Math.round(total * PROMO.percent / 1.9 / 10000) * 10000 : 0;
     }, [total, promoEnabled]);
     const totalWithPromo = total - promoAmount;
 
