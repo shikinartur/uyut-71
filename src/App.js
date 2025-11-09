@@ -460,7 +460,7 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
             </a>
             <button
               type="button"
-              className="mt-2 w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg text-sm font-semibold shadow-md hover:from-blue-600 hover:to-blue-800 transition"
+              className="mt-2 w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg active:shadow-sm hover:from-blue-600 hover:to-blue-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               onClick={() => scrollToCTA(setIsMenuOpen)}
               aria-label="Заказать обратный звонок"
             >
@@ -794,7 +794,7 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
               <p className="text-sm text-neutral-600 mb-4">Мы перезвоним Вам в ближайшее время</p>
               <button
                 onClick={onClose}
-                className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
                 Закрыть
               </button>
@@ -843,7 +843,7 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
 
               <button
                 type="submit"
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition-colors duration-200 shadow-md"
+                className="w-full bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
                 ОТПРАВИТЬ
               </button>
@@ -913,7 +913,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                             </div>
                             <button
                                 onClick={() => onOrderClick(p)}
-                                className="w-full bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-extrabold py-3 px-4 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
+                                className="w-full bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-extrabold py-3 px-4 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl active:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
                             >
                                 ХОЧУ ТАКОЙ ДОМ
                             </button>
@@ -1500,7 +1500,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                   </p>
                   <button
                     onClick={() => setShowPreview(false)}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                   >
                     Подробный расчет
                   </button>
@@ -1515,7 +1515,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                   <button
                     type="button"
                     onClick={() => setIsSent(false)}
-                    className="mt-3 text-xs text-neutral-500 underline"
+                    className="mt-3 px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                   >
                     Сделать новый расчет
                   </button>
@@ -1585,15 +1585,15 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
               <div className="mt-2 grid gap-2">
                 <button
                   type="submit"
-                  className="w-full px-4 py-3 rounded-2xl bg-emerald-600 text-white font-extrabold text-lg shadow-xl hover:bg-emerald-700 transition" 
+                  className="w-full px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-extrabold text-lg shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200" 
                 >
-                  Получить расчет
+                  ПОЛУЧИТЬ РАСЧЕТ
                 </button>
                 {/* ПРАВКА 1: Кнопка ведет на прокрутку к форме CTA */}
                 <button
                   type="button"
                   onClick={() => scrollToCTA()}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-emerald-600 font-bold text-emerald-700 bg-white hover:bg-emerald-50 transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-emerald-600 font-bold text-emerald-700 bg-white hover:bg-emerald-50 shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                 >
                   Получить бесплатную консультацию
                 </button>
@@ -1634,7 +1634,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
               const el = document.querySelector('#calc form');
               if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }}
-            className={`ml-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 text-white font-extrabold text-sm shadow-xl hover:bg-red-700 transition-all duration-300 ${priceAnimated ? 'animate-bounce from-red-600 to-red-800 shadow-2xl' : ''}`}
+            className={`ml-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-extrabold text-sm shadow-xl hover:shadow-2xl active:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ${priceAnimated ? 'animate-bounce from-red-600 to-red-800 shadow-2xl' : ''}`}
             style={{ pointerEvents: 'auto' }}
           >
             ПОЛУЧИТЬ РАСЧЕТ
@@ -1917,7 +1917,7 @@ function YandexReviewsWidget({
                           
                           <button
                             type="submit"
-                            className="w-full px-4 py-3 font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg transition-all"
+                            className="w-full px-4 py-3 font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                           >
                             Перезвоните мне
                           </button>
@@ -1932,7 +1932,7 @@ function YandexReviewsWidget({
                     <div className="md:hidden flex flex-col gap-3 sm:flex-row sm:justify-center">
                         <a 
                             href={`tel:${CONTACTS.phoneHref}`}
-                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md"
+                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H5a2 2 0 01-2-2V5z" />
@@ -1944,7 +1944,7 @@ function YandexReviewsWidget({
                             href="https://t.me/Baturainstant?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС»."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                            className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.155.232.171.326.016.094.036.308.02.475z"/>
@@ -1956,7 +1956,7 @@ function YandexReviewsWidget({
                             href={`https://wa.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}?text=Здравствуйте! У меня есть вопросы о строительстве дома «Уют-71.ФИКС».`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                            className="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
@@ -2129,7 +2129,7 @@ function SuccessMessage({ onReset, title, subtitle, whatsappMessage, whatsappBut
               href={getWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-colors shadow-lg"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
@@ -3521,7 +3521,7 @@ function UyutLanding() {
                 
                 <button
                   type="submit"
-                  className="w-full mt-1 px-4 py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-lg shadow-xl hover:bg-emerald-700 transition"
+                  className="w-full mt-1 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-extrabold text-lg shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                 >
                   ОТПРАВИТЬ
                 </button>
