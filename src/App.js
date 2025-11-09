@@ -1434,7 +1434,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     </div>
                     {/* Улучшенное напоминание о времени акции */}
                     <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200 text-center animate-pulse">
-                     ⏰ ЗАФИКСИРУЙ СКИДКУ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
+                     ⏰ ЗАФИКСИРУЙТЕ СКИДКУ! Осталось всего {daysLeft} {daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}!
                     </div>
                   </div>
 
@@ -1637,7 +1637,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
             className={`ml-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 text-white font-extrabold text-sm shadow-xl hover:bg-red-700 transition-all duration-300 ${priceAnimated ? 'animate-bounce from-red-600 to-red-800 shadow-2xl' : ''}`}
             style={{ pointerEvents: 'auto' }}
           >
-            ЗАФИКСИРОВАТЬ
+            ПОЛУЧИТЬ РАСЧЕТ
           </button>
         </div>
       </div>
@@ -2018,22 +2018,133 @@ function YandexMapWidget() {
 }
 
 /**
+ * Генерация WhatsApp сообщений для разных форм
+ */
+function generateWhatsAppMessage(formType, formData = {}) {
+  const baseInfo = `🏗️ Строительная компания «БАТУРА»
+📞 ${CONTACTS.phone}
+🌐 ${CONTACTS.website}`;
+
+  switch (formType) {
+    case 'calculator':
+      return `🏠 Спасибо за интерес к дому «Уют-71.ФИКС»!
+
+Ваш расчет готов: ${formData.totalWithPromo || 'готовим расчет'} руб.
+📋 Комплектация: ${formData.packLabel || 'выбранная'}
+⏰ Скидка действует до ${PROMO.until}
+
+Менеджер перезвонит для уточнения деталей.
+
+${baseInfo}`;
+
+    case 'pack-order':
+      return `🎉 Отлично! Вы выбрали комплектацию «${formData.packLabel || 'выбранную'}»!
+
+💰 Цена со скидкой: ${formData.packPrice || 'уточним при звонке'} руб.
+📅 Срок строительства: 7 недель
+✅ Фиксированная цена в договоре
+
+Готовим персональное предложение. Перезвоним в течение 10 минут!
+
+${baseInfo}`;
+
+    case 'consultation':
+      return `👋 Спасибо за заявку на консультацию!
+
+Наш эксперт перезвонит вам и поможет:
+• Выбрать оптимальную комплектацию
+• Рассчитать точную стоимость
+• Зафиксировать текущую скидку
+
+${baseInfo}`;
+
+    case 'callback':
+      return `📞 Заявка на обратный звонок принята!
+
+Наш менеджер ответит на все вопросы о:
+• Сроках строительства
+• Гарантиях и договоре
+• Стоимости и комплектации
+
+${baseInfo}`;
+
+    case 'promo':
+      return `🔥 Скидка зафиксирована до ${PROMO.until}!
+
+Вы успели! Ваша персональная скидка сохранена.
+💰 Экономия составит до ${Math.round(formData.basePrice * PROMO.percent) || 'значительную сумму'} рублей
+
+Менеджер перезвонит для уточнения деталей.
+
+${baseInfo}`;
+
+    case 'appointment':
+      return `📅 Заявка на встречу принята!
+
+Менеджер свяжется для согласования удобного времени встречи.
+
+На встрече покажем:
+• Все материалы и технологии
+• Проекты готовых домов  
+• Составим персональную смету
+
+${baseInfo}`;
+
+    default:
+      return `👋 Спасибо за обращение!
+
+Менеджер свяжется с вами в ближайшее время.
+
+${baseInfo}`;
+  }
+}
+
+/**
  * Универсальный компонент для отображения сообщения об успехе после отправки формы.
  * @param {function} onReset - Функция для сброса состояния отправки.
  * @param {string} title - Заголовок сообщения.
  * @param {string} subtitle - Подзаголовок (ожидайте звонка).
  */
-function SuccessMessage({ onReset, title, subtitle }) {
+function SuccessMessage({ onReset, title, subtitle, whatsappMessage, whatsappButtonText, formContext }) {
+  const getWhatsAppLink = () => {
+    if (!whatsappMessage) return null;
+    const phone = CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '');
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    return `https://wa.me/${phone}?text=${encodedMessage}`;
+  };
+
   return (
-    <div className="p-4 bg-emerald-100 border border-emerald-400 rounded-xl text-center">
-        <p className="font-bold text-emerald-700">{title}</p>
-        <p className="text-sm text-emerald-600 mt-1">{subtitle}</p>
+    <div className="p-6 bg-emerald-100 border border-emerald-400 rounded-xl text-center">
+        <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <p className="font-bold text-emerald-700 text-lg mb-2">{title}</p>
+        <p className="text-sm text-emerald-600 mb-4">{subtitle}</p>
+        
+        {whatsappMessage && (
+          <div className="space-y-3">
+            <a
+              href={getWhatsAppLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-colors shadow-lg"
+            >
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.347"/>
+              </svg>
+              {whatsappButtonText || "Получить подтверждение в WhatsApp"}
+            </a>
+          </div>
+        )}
+        
         <button
             type="button"
             onClick={onReset}
-            className="mt-3 text-xs text-neutral-500 underline"
+            className="mt-4 text-sm text-neutral-500 underline hover:text-neutral-700"
         >
-            Вернуться к форме
+            Отправить еще одну заявку
         </button>
     </div>
   );

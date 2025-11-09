@@ -5,6 +5,7 @@ export const CONTACTS = {
   phoneHref: "+74993220400",
   phoneWhatsapp: "+79257331028",
   email: "dom@batura.ru",
+  website: "https://batura.ru/uyut-71-fix/",
   address: "Москва, пр. 60-летия Октября, 9с2, офис 217",
   address2: "метро Академическая",
   hours: "Пн–Сб 10:00 – 20:00 (по записи)",
