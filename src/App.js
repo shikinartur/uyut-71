@@ -1420,21 +1420,16 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 </div>
               </div>
 
-              <div className={`border-t border-emerald-500 pt-2 flex justify-between text-base bg-emerald-50 -mx-3 -mb-3 px-3 py-2 rounded-b-xl transition-all duration-300 ${priceAnimated ? 'animate-pulse bg-gradient-to-r from-emerald-100 to-emerald-200 shadow-lg scale-[1.02]' : ''}`}>
-                <span className={`font-extrabold text-base text-emerald-700 transition-all duration-300 ${priceAnimated ? 'text-emerald-800' : ''}`}>ЦЕНА СО СКИДКОЙ</span>
-                <span className={`font-extrabold text-2xl sm:text-3xl text-emerald-700 transition-all duration-300 ${priceAnimated ? 'text-emerald-800 scale-110' : ''}`}>
-                  {rub(totalWithPromo)}
-                </span>
-              </div>
+              
             </div>
 
             {/* Предварительный показ результата */}
             {showPreview && (
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                 <div className="text-center mb-3">
-                  <h5 className="font-bold text-blue-800 mb-2">🎯 Ваш результат готов!</h5>
+                  <h5 className="font-bold text-blue-800 mb-2">🎯 Ваш расчет готов!</h5>
                   <div className="text-2xl font-extrabold text-blue-900 mb-2">
-                    {rub(totalWithPromo)}
+                    {`Цена со скидкой ${rub(totalWithPromo)}`}
                   </div>
                   <p className="text-sm text-blue-700">
                     💰 Экономия с текущей скидкой: <span className="font-bold">{rub(promoAmount)}</span>
@@ -1472,13 +1467,13 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
               onSubmit={handleCalculatorSubmit}
             >
               <div className="grid grid-cols-1 gap-3">
-                {/* УДАЛЕНО: Заголовок "Оставьте контакты для фиксации цены и скидки" */}
+                <h5 className="text-lg font-bold text-center text-neutral-900 mb-2">Отправьте мой расчет на WhatsApp</h5>
                 <div>
                   <input
                     name="name"
                     type="text"
                     required
-                    placeholder="Ваше имя"
+                    placeholder="Имя"
                     className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-900"
                   />
                 </div>
@@ -1496,16 +1491,13 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                   <textarea
                     name="notes"
                     rows={2}
-                    placeholder="Ваши пожелания или вопросы"
+                    placeholder="Пожелания, если есть..."
                     className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-900"
                   />
                 </div>
               </div>
               
-              <p className="text-xs text-neutral-600 text-center mt-2">
-                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
-              </p>
-              
+                         
               <div className="flex justify-center w-full max-w-full overflow-hidden">
                 <div className="w-full max-w-xs">
                   <SmartCaptcha 
@@ -1520,7 +1512,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                   type="submit"
                   className="w-full px-4 py-3 rounded-2xl bg-emerald-600 text-white font-extrabold text-lg shadow-xl hover:bg-emerald-700 transition" 
                 >
-                  Получить расчет и ЗАФИКСИРОВАТЬ Цену
+                  Получить расчет
                 </button>
                 {/* ПРАВКА 1: Кнопка ведет на прокрутку к форме CTA */}
                 <button
@@ -1531,6 +1523,10 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                   Получить бесплатную консультацию
                 </button>
               </div>
+                <p className="text-xs text-neutral-600 text-center mt-2">
+                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+              </p>
+              
               <div className="mt-2 text-xs text-neutral-500">
                 * Доставка и бытовка рассчитываются индивидуально.
               </div>
@@ -1808,10 +1804,7 @@ function YandexReviewsWidget({
                             inputMode="tel"
                           />
                           
-                          <p className="text-xs text-neutral-600">
-                            Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
-                          </p>
-                          
+                                                    
                           <div className="flex justify-center">
                             <SmartCaptcha 
                               onSuccess={(token) => setFaqCallbackCaptchaToken(token)} 
@@ -1823,8 +1816,11 @@ function YandexReviewsWidget({
                             type="submit"
                             className="w-full px-4 py-3 font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg transition-all"
                           >
-                            ПЕРЕЗВОНИТЕ МНЕ
+                            Перезвоните мне
                           </button>
+                          <p className="text-xs text-neutral-600">
+                            Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
+                          </p>
                         </form>
                       )}
                     </div>
@@ -1842,7 +1838,7 @@ function YandexReviewsWidget({
                         </a>
                         
                         <a 
-                            href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
+                            href="https://t.me/Baturainstant"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
@@ -3029,7 +3025,7 @@ function UyutLanding() {
                 
                 {/* Форма записи на консультацию с сообщением об успехе */}
                 <div className="mt-6 border-t pt-4">
-                  <h4 className="font-bold text-lg mb-3 text-center">Записаться на консультацию</h4>
+                  <h4 className="font-bold text-lg mb-3 text-center">Записаться на консультацию в офис</h4>
                   {isAppointmentFormSent ? (
                       <SuccessMessage
                         title="✅ Заявка на консультацию отправлена!"
@@ -3172,7 +3168,7 @@ function UyutLanding() {
                   }
                 }}>
                 {/* ПРАВКА 1: Новый заголовок для формы консультации */}
-                <h3 className="text-xl font-bold text-center">Получить бесплатную консультацию</h3>
+                <h3 className="text-xl font-bold text-center">Получить консультацию по телефону</h3>
                 <input
                   type="text"
                   name="name"
@@ -3247,7 +3243,7 @@ function UyutLanding() {
           
           {/* Telegram */}
           <a
-            href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
+            href="https://t.me/Baturainstant"
             target="_blank"
             rel="noopener noreferrer"
             className="relative w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 messenger-animate-attention border-2 border-white"
@@ -3281,7 +3277,7 @@ function UyutLanding() {
           
           {/* Telegram */}
           <a
-            href={`https://t.me/${CONTACTS.phoneWhatsapp.replace(/[^\d]/g, '')}`}
+            href="https://t.me/Baturainstant"
             target="_blank"
             rel="noopener noreferrer"
             className="group relative w-16 h-16 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 messenger-animate-pulse border-3 border-white"
