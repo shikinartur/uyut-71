@@ -1941,7 +1941,7 @@ function YandexReviewsWidget({
                         </a>
                         
                         <a 
-                            href="https://t.me/Baturainstant"
+                            href="https://t.me/Baturainstant?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС»."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
@@ -3444,7 +3444,7 @@ function UyutLanding() {
           
           {/* Telegram */}
           <a
-            href="https://t.me/Baturainstant"
+            href="https://t.me/Baturainstant?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС»."
             target="_blank"
             rel="noopener noreferrer"
             className="relative w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 messenger-animate-attention border-2 border-white"
@@ -3478,7 +3478,7 @@ function UyutLanding() {
           
           {/* Telegram */}
           <a
-            href="https://t.me/Baturainstant"
+            href="https://t.me/Baturainstant?text=Здравствуйте! Интересует строительство дома «Уют-71.ФИКС»."
             target="_blank"
             rel="noopener noreferrer"
             className="group relative w-16 h-16 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 messenger-animate-pulse border-3 border-white"
