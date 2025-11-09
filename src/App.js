@@ -4,6 +4,7 @@ import "./index.css";
 // import { Helmet } from "react-helmet";
 import { sendDataToApi, generateComments } from "./config/bitrix24";
 import { SmartCaptcha } from "./SmartCaptcha";
+import { CAPTCHA_CONFIG, validateCaptcha, getCaptchaError } from "./config/captcha";
 
 // ====================================================================
 // ==================== ИМПОРТ ИЗОБРАЖЕНИЙ (Относительные пути для Webpack) =============
@@ -688,8 +689,7 @@ function Modal({ images = [], startIndex = 0, onClose, watermarkType = "default"
 }
 
 // Order Modal Component
-function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) {
-  const [validationErrors, setValidationErrors] = useState({});
+function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft, captchaToken, setCaptchaToken, validationErrors, setValidationErrors }) {
   
   if (!isOpen || !pack) return null;
 
@@ -717,6 +717,13 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
         hasErrors = true;
     }
     
+    // Проверка капчи
+    const captchaError = getCaptchaError(captchaToken);
+    if (captchaError) {
+        newErrors.captcha = captchaError;
+        hasErrors = true;
+    }
+    
     if (hasErrors) {
         setValidationErrors(newErrors);
         return;
@@ -728,11 +735,13 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
       pack_key: pack.key,
       pack_label: pack.label,
       pack_price: pack.basePrice,
+      captcha_token: captchaToken,
     };
 
     const success = await sendDataToApi(data, 'PackOrder');
     
     if (success) {
+      setCaptchaToken(null); // Сброс токена после успешной отправки
       onSubmit();
     }
   };
@@ -836,6 +845,19 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft }) 
                   <p className="text-red-500 text-sm mt-1">{validationErrors.phone}</p>
                 )}
               </div>
+              
+              <div className="flex justify-center">
+                <SmartCaptcha 
+                  onSuccess={(token) => {
+                    setCaptchaToken(token);
+                    setValidationErrors(prev => ({...prev, captcha: ''}));
+                  }} 
+                  onError={(error) => console.error('Captcha error:', error)}
+                />
+              </div>
+              {validationErrors.captcha && (
+                <p className="text-red-500 text-sm text-center">{validationErrors.captcha}</p>
+              )}
               
               <p className="text-xs text-neutral-500 text-center">
                 Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
@@ -1154,7 +1176,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
         }
         
         // Проверка капчи
-        if (!calculatorCaptchaToken) {
+        if (!validateCaptcha(calculatorCaptchaToken)) {
             alert('Пожалуйста, подтвердите, что вы не робот, выполнив проверку капчи.');
             return;
         }
@@ -2178,12 +2200,14 @@ function UyutLanding() {
   const [appointmentCaptchaToken, setAppointmentCaptchaToken] = useState(null);
   const [ctaCaptchaToken, setCtaCaptchaToken] = useState(null);
   const [faqCallbackCaptchaToken, setFaqCallbackCaptchaToken] = useState(null);
+  const [orderModalCaptchaToken, setOrderModalCaptchaToken] = useState(null);
 
   // Состояния для валидации форм
   const [ctaValidationErrors, setCtaValidationErrors] = useState({});
   const [faqValidationErrors, setFaqValidationErrors] = useState({});
   const [promoValidationErrors, setPromoValidationErrors] = useState({});
   const [appointmentValidationErrors, setAppointmentValidationErrors] = useState({});
+  const [orderModalValidationErrors, setOrderModalValidationErrors] = useState({});
 
   // Состояния для интерактивных элементов
   const [visibleSection, setVisibleSection] = useState('');
@@ -2459,8 +2483,9 @@ function UyutLanding() {
         hasErrors = true;
     }
     
-    if (!promoCaptchaToken) {
-        newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+    const captchaError = getCaptchaError(promoCaptchaToken);
+    if (captchaError) {
+        newErrors.captcha = captchaError;
         hasErrors = true;
     }
     
@@ -2510,8 +2535,9 @@ function UyutLanding() {
         hasErrors = true;
     }
     
-    if (!appointmentCaptchaToken) {
-        newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+    const captchaError = getCaptchaError(appointmentCaptchaToken);
+    if (captchaError) {
+        newErrors.captcha = captchaError;
         hasErrors = true;
     }
     
@@ -2559,8 +2585,9 @@ function UyutLanding() {
         hasErrors = true;
     }
     
-    if (!faqCallbackCaptchaToken) {
-        newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+    const captchaError = getCaptchaError(faqCallbackCaptchaToken);
+    if (captchaError) {
+        newErrors.captcha = captchaError;
         hasErrors = true;
     }
     
@@ -3426,8 +3453,9 @@ function UyutLanding() {
                       hasErrors = true;
                   }
                   
-                  if (!ctaCaptchaToken) {
-                      newErrors.captcha = 'Пожалуйста, подтвердите, что вы не робот';
+                  const captchaError = getCaptchaError(ctaCaptchaToken);
+                  if (captchaError) {
+                      newErrors.captcha = captchaError;
                       hasErrors = true;
                   }
                   
@@ -3740,11 +3768,17 @@ function UyutLanding() {
           setOrderModalOpen(false);
           setSelectedPack(null);
           setOrderFormSent(false);
+          setOrderModalValidationErrors({});
+          setOrderModalCaptchaToken(null);
         }}
         pack={selectedPack}
         onSubmit={() => setOrderFormSent(true)}
         isSubmitted={orderFormSent}
         daysLeft={daysLeft}
+        captchaToken={orderModalCaptchaToken}
+        setCaptchaToken={setOrderModalCaptchaToken}
+        validationErrors={orderModalValidationErrors}
+        setValidationErrors={setOrderModalValidationErrors}
       />
     </>
   );
