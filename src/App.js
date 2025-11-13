@@ -356,8 +356,8 @@ function Header({ isMenuOpen, setIsMenuOpen, daysLeft, promoOffset = 0, totalWit
                 className={`ml-1 px-2 py-1 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white text-xs font-bold shadow hover:from-red-600 hover:to-red-800 transition-all duration-300 ${priceAnimated ? 'animate-bounce bg-gradient-to-r from-red-600 to-red-800' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  const el = document.querySelector('#calc form');
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  const el = document.querySelector('#calc');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
               >
                 СМЕТА
@@ -865,7 +865,7 @@ function OrderModal({ isOpen, onClose, pack, onSubmit, isSubmitted, daysLeft, ca
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                className="w-full bg-gradient-to-br from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800 text-white font-bold py-4 px-4 rounded-xl shadow-[0_8px_16px_rgba(239,68,68,0.4)] hover:shadow-[0_12px_24px_rgba(239,68,68,0.5)] active:shadow-[0_4px_8px_rgba(239,68,68,0.3)] transform hover:translate-y-[-2px] active:translate-y-0 transition-all duration-200"
               >
                 ОТПРАВИТЬ
               </button>
@@ -1232,9 +1232,13 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
         
         {/* Счетчик пользователей */}
         <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="animate-count-up">{calculatorUsers}</span>
-          <span>человек сейчас рассчитывают стоимость</span>
+          <div className="relative flex items-center justify-center">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="absolute w-3 h-3 bg-green-400 rounded-full animate-ping opacity-75"></div>
+          </div>
+          <span className="text-xs">СЕЙЧАС:</span>
+          <span className="animate-count-up font-extrabold text-lg px-2 py-0.5 bg-white rounded-md border border-green-200">{calculatorUsers}</span>
+          <span>считают стоимость на сайте</span>
         </div>
       </div>
 
@@ -1460,6 +1464,26 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                     </div>
                   </div>
 
+                  {/* Предварительный показ результата */}
+                  {showPreview && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                      <div className="text-center mb-3">
+                        <h5 className="font-bold text-blue-800 mb-2">🎯 Ваш расчет готов!</h5>
+                        <div className="text-2xl font-extrabold text-blue-900 mb-2">
+                          {`Цена со скидкой ${rub(totalWithPromo)}`}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <button
+                          onClick={() => setShowPreview(false)}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                        >
+                          Подробный расчет
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Блок ипотеки - минималистичный дизайн */}
                   <div className="bg-neutral-50 rounded-lg p-3 border border-neutral-200">
                     <div className="flex items-center justify-between mb-3">
@@ -1503,32 +1527,6 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
 
               
             </div>
-
-            {/* Предварительный показ результата */}
-            {showPreview && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <div className="text-center mb-3">
-                  <h5 className="font-bold text-blue-800 mb-2">🎯 Ваш расчет готов!</h5>
-                  <div className="text-2xl font-extrabold text-blue-900 mb-2">
-                    {`Цена со скидкой ${rub(totalWithPromo)}`}
-                  </div>
-                  <p className="text-sm text-blue-700">
-                    💰 Экономия с текущей скидкой: <span className="font-bold">{rub(promoAmount)}</span>
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-blue-600 mb-3">
-                    Заканчивается {PROMO.until}
-                  </p>
-                  <button
-                    onClick={() => setShowPreview(false)}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-                  >
-                    Подробный расчет
-                  </button>
-                </div>
-              </div>
-            )}
             
             {isSent ? (
               <div className="mt-4 p-4 bg-emerald-100 border border-emerald-400 rounded-xl text-center">
@@ -1548,7 +1546,14 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
               onSubmit={handleCalculatorSubmit}
             >
               <div className="grid grid-cols-1 gap-3">
-                <h5 className="text-lg font-bold text-center text-neutral-900 mb-2">Отправьте мой расчет на WhatsApp</h5>
+                {/* Цена со скидкой над формой - компактно */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
+                  <div className="text-lg font-extrabold text-blue-900">
+                    Цена со скидкой {rub(totalWithPromo)}
+                  </div>
+                  <div className="text-xs text-blue-700 mt-1">Отправим расчет в WhatsApp</div>
+                </div>
+                
                 <div>
                   <input
                     name="name"
@@ -1604,20 +1609,20 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                 </div>
               </div>
               
-              <div className="mt-2 grid gap-2">
+              <div className="mt-2 grid gap-3">
                 <button
                   type="submit"
-                  className="w-full px-4 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-extrabold text-lg shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200" 
+                  className="w-full px-4 py-4 rounded-2xl bg-gradient-to-br from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800 text-white font-extrabold text-base shadow-[0_8px_16px_rgba(239,68,68,0.4)] hover:shadow-[0_12px_24px_rgba(239,68,68,0.5)] active:shadow-[0_4px_8px_rgba(239,68,68,0.3)] transform hover:translate-y-[-2px] active:translate-y-0 transition-all duration-200"
                 >
                   ПОЛУЧИТЬ РАСЧЕТ
                 </button>
-                {/* ПРАВКА 1: Кнопка ведет на прокрутку к форме CTA */}
+                {/* Кнопка консультации */}
                 <button
                   type="button"
                   onClick={() => scrollToCTA()}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-emerald-600 font-bold text-emerald-700 bg-white hover:bg-emerald-50 shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                  className="w-full px-4 py-4 rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-800 text-white font-bold text-base shadow-[0_8px_16px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_24px_rgba(16,185,129,0.5)] active:shadow-[0_4px_8px_rgba(16,185,129,0.3)] transform hover:translate-y-[-2px] active:translate-y-0 transition-all duration-200"
                 >
-                  Получить бесплатную консультацию
+                  Получить консультацию
                 </button>
               </div>
                 <p className="text-xs text-neutral-600 text-center mt-2">
@@ -1709,7 +1714,7 @@ function Gallery({ openModal }) {
           className="px-6 py-3 sm:px-7 sm:py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-800 text-white font-extrabold text-base sm:text-lg shadow-xl hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 flex items-center gap-2 justify-center"
                   aria-label="Посмотреть комплектации и цены домов"
         >
-          Узнать Цены и комплектации
+          Узнать комплектации и цены
         </button>
       </div>
     </section>
@@ -1874,7 +1879,10 @@ function YandexReviewsWidget({
                 
                 {/* Призыв к действию в FAQ блоке */}
                         <div className="border-t border-neutral-200 pt-6">
-                          <p className="text-base text-neutral-600 mb-4 text-center font-medium">Остались вопросы?</p>
+                          <div className="text-center mb-4">
+                            <p className="text-2xl font-bold text-neutral-900 mb-2">Остались вопросы?</p>
+                            
+                          </div>
                           
                           {/* Форма для десктопа */}
                     <div className="hidden md:block">
@@ -2838,9 +2846,9 @@ function UyutLanding() {
                     <button
                       onClick={() => scrollToCTA()}
                       className="px-8 py-4 rounded-2xl border-2 border-white/60 font-bold text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/80 transition-all duration-300 text-lg flex items-center gap-2 justify-center shadow-xl"
-                      aria-label="Получить бесплатную консультацию от менеджера"
+                      aria-label="Получить консультацию от менеджера"
                     >
-                      <span>Бесплатная консультация</span>
+                      <span>Получить консультацию</span>
                     </button>
                   </div>
                 </div>
@@ -2921,9 +2929,9 @@ function UyutLanding() {
                   <button
                     onClick={() => scrollToCTA()}
                     className="w-full max-w-xs mx-auto px-4 py-4 rounded-2xl border-2 border-white/90 font-bold text-white bg-white/25 backdrop-blur-sm hover:bg-white/35 hover:border-white transition-all duration-300 text-sm shadow-xl"
-                    aria-label="Получить бесплатную консультацию от менеджера"
+                    aria-label="Получить консультацию от менеджера"
                   >
-                    Бесплатная консультация
+                    Получить консультацию
                   </button>
                 </div>
               </div>
@@ -3062,7 +3070,7 @@ function UyutLanding() {
                       type="submit"
                       className="w-full px-4 py-3 font-bold rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg transition-all"
                     >
-                      ХОЧУ СКИДКУ
+                      ЗАФИКСИРОВАТЬ СКИДКУ
                     </button>
                   </form>
                 )}
@@ -3243,7 +3251,7 @@ function UyutLanding() {
                 </div>
               </div>
                           <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-xl space-y-6 sticky top-24 h-fit" itemScope itemType="http://schema.org/LocalBusiness">
-                <h3 className="font-extrabold text-xl mb-3 text-center text-neutral-900">Пользуйтесь бесплатной офисной парковкой</h3>
+                <h3 className="font-extrabold text-xl mb-3 text-center text-neutral-900">Воспользуйтесь бесплатной офисной парковкой</h3>
                 <meta itemProp="name" content="Батура. Строительство каркасных домов" />
                 
                 <div className="flex flex-col gap-4">
@@ -3373,7 +3381,7 @@ function UyutLanding() {
                         
                         <button
                             type="submit"
-                            className="w-full px-3 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition shadow-lg" 
+                            className="w-full px-4 py-4 rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-800 text-white font-bold shadow-[0_8px_16px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_24px_rgba(16,185,129,0.5)] active:shadow-[0_4px_8px_rgba(16,185,129,0.3)] transform hover:translate-y-[-2px] active:translate-y-0 transition-all duration-200" 
                             aria-label="Записаться на консультацию"
                         >
                             ЗАПИСАТЬСЯ
@@ -3549,7 +3557,7 @@ function UyutLanding() {
                 
                 <button
                   type="submit"
-                  className="w-full mt-1 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-extrabold text-lg shadow-lg hover:shadow-xl active:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                  className="w-full px-4 py-4 rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-800 text-white font-extrabold text-lg shadow-[0_8px_16px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_24px_rgba(16,185,129,0.5)] active:shadow-[0_4px_8px_rgba(16,185,129,0.3)] transform hover:translate-y-[-2px] active:translate-y-0 transition-all duration-200"
                 >
                   ОТПРАВИТЬ
                 </button>
