@@ -1476,7 +1476,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                       <div className="text-center">
                         <button
                           onClick={() => setShowPreview(false)}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                          className="px-6 py-4 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 text-white font-bold text-base rounded-lg shadow-[0_8px_16px_rgba(37,99,235,0.4)] hover:shadow-[0_12px_24px_rgba(37,99,235,0.5)] active:shadow-[0_4px_8px_rgba(37,99,235,0.3)] transform hover:translate-y-[-2px] active:translate-y-0 transition-all duration-200"
                         >
                           Подробный расчет
                         </button>
@@ -1551,7 +1551,7 @@ function Packs({ activePack, setActivePack, openModal, onOrderClick, daysLeft })
                   <div className="text-lg font-extrabold text-blue-900">
                     Цена со скидкой {rub(totalWithPromo)}
                   </div>
-                  <div className="text-xs text-blue-700 mt-1">Отправим расчет в WhatsApp</div>
+                  <div className="text-xs text-blue-700 mt-1">Отправим подробный расчет в WhatsApp</div>
                 </div>
                 
                 <div>
